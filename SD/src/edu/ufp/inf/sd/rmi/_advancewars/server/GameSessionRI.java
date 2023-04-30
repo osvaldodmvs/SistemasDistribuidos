@@ -7,4 +7,5 @@ import java.rmi.RemoteException;
 
 public interface GameSessionRI extends Remote {
     public void logout () throws RemoteException;
+    public String getuser () throws RemoteException;
 }

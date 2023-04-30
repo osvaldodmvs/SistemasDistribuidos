@@ -5,36 +5,40 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
+import static edu.ufp.inf.sd.rmi._advancewars.server.User.generateJWT;
+
 
 public class GameFactoryImpl extends UnicastRemoteObject implements GameFactoryRI {
 
-    private edu.ufp.inf.sd.rmi._04_diglib.server.DBMockup db;
+    private DBMockup db;
     private HashMap<String, GameSessionImpl> sessions;
     public GameFactoryImpl() throws RemoteException {
         super();
-        this.db = new edu.ufp.inf.sd.rmi._04_diglib.server.DBMockup();
+        this.db = new DBMockup();
         this.sessions = new HashMap<>();
     }
 
     @Override
     public boolean register(String username, String pwd) throws RemoteException {
-        if(db.exists(username, pwd)){
+        if(db.exists(username)){
             return false;
         }
-        db.register(username, pwd);
+        String jwt = generateJWT(username);
+        db.register(username, pwd, jwt);
         return true;
     }
 
     @Override
     public GameSessionRI login(String username, String pwd) throws RemoteException {
-        if(db.exists(username, pwd)){
-            if(sessions.containsKey(username)){
-                return sessions.get(username);
-            }
-            else{
-                GameSessionImpl session = new GameSessionImpl(this,username);
-                sessions.put(username, session);
-                return session;
+        if(db.exists(username)) {
+            if (db.validate(username, pwd)) {
+                if (sessions.containsKey(username)) {
+                    return sessions.get(username);
+                } else {
+                    GameSessionImpl session = new GameSessionImpl(this, username);
+                    sessions.put(username, session);
+                    return session;
+                }
             }
         }
         return null;
