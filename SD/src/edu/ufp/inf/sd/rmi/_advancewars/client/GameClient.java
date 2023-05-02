@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rmi._advancewars.client;
 
 import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.StartMenu;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
@@ -139,15 +140,17 @@ public class GameClient {
                         JOptionPane.showMessageDialog(frame, "User doesn't exist or wrong credentials");
                     }
                     else {
-                        //boolean isJwtValid = verifyJWT(gameSessionRI.getuser());
+                        boolean isJwtValid = verifyJWT(gameSessionRI.getuser());
 
-                        //if (!isJwtValid) {
-                        //    JOptionPane.showMessageDialog(frame, "User authenticated, but JWT is invalid or expired!");
-                        //} else {
+                        if (!isJwtValid) {
+                            JOptionPane.showMessageDialog(frame, "User authenticated, but JWT is invalid or expired!");
+                        } else {
                             JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
-                            //new Game();
-                        }
-                    //}
+                        frame.setVisible(false);
+                        frame.dispose();
+                        new Game();
+                    }
+                    }
                 } catch (RemoteException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
@@ -172,7 +175,9 @@ public class GameClient {
                             // Open the login window or perform login logic
                             GameSessionRI gameSessionRI = gameFactoryRI.login(username,passwordString);
                             JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
-                            //new Game();
+                            frame.setVisible(false);
+                            frame.dispose();
+                            new Game();
                         } else {
                             // Clear the fields or perform any other desired action
                             usernameField.setText("");
@@ -194,6 +199,8 @@ public class GameClient {
 
         frame.add(panel);
         frame.setVisible(true);
+
+        //new Game();
     }
 }
 

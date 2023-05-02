@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="dotenv-java-2.3.2">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/dotenv-java-2.3.2.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

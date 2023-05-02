@@ -5,9 +5,9 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class DigLibSessionImpl extends UnicastRemoteObject implements DigLibSessionRI {
 
-    private GameFactoryImpl diglibFacImpl;
+    private DigLibFactoryImpl diglibFacImpl;
     private String user;
-    public DigLibSessionImpl(GameFactoryImpl diglibFacImpl, String username) throws RemoteException {
+    public DigLibSessionImpl(DigLibFactoryImpl diglibFacImpl, String username) throws RemoteException {
         super();
         this.diglibFacImpl = diglibFacImpl;
         this.user = username;

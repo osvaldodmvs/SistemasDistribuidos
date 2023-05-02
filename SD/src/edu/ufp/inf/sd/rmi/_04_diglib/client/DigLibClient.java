@@ -1,7 +1,7 @@
 package edu.ufp.inf.sd.rmi._04_diglib.client;
 
 import edu.ufp.inf.sd.rmi._04_diglib.server.Book;
-import edu.ufp.inf.sd.rmi._04_diglib.server.GameFactoryRI;
+import edu.ufp.inf.sd.rmi._04_diglib.server.DigLibFactoryRI;
 import edu.ufp.inf.sd.rmi._04_diglib.server.DigLibSessionRI;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 import java.rmi.RemoteException;
@@ -33,7 +33,7 @@ public class DigLibClient {
     /**
      * Remote interface that will hold the Servant proxy
      */
-    private GameFactoryRI gameFactoryRI;
+    private DigLibFactoryRI diglibFactoryRI;
 
     public static void main(String[] args) {
         if (args != null && args.length < 2) {
@@ -73,7 +73,7 @@ public class DigLibClient {
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR lookup service @ {0}", serviceUrl);
                 
                 //============ Get proxy MAIL_TO_ADDR HelloWorld service ============
-                gameFactoryRI = (GameFactoryRI) registry.lookup(serviceUrl);
+                diglibFactoryRI = (DigLibFactoryRI) registry.lookup(serviceUrl);
             } else {
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "registry not bound (check IPs). :(");
                 //registry = LocateRegistry.createRegistry(1099);
@@ -81,17 +81,17 @@ public class DigLibClient {
         } catch (RemoteException | NotBoundException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
-        return gameFactoryRI;
+        return diglibFactoryRI;
     }
     
     private void playService() {
         try {
             //============ Call HelloWorld remote service ============
-            gameFactoryRI.register("osvaldo","password");
+            diglibFactoryRI.register("osvaldo","password");
 
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "REGISTERED, OSVALDO");
 
-            DigLibSessionRI digLibSessionRI = gameFactoryRI.login("osvaldo","password");
+            DigLibSessionRI digLibSessionRI = diglibFactoryRI.login("osvaldo","password");
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "LOGGED IN, HELLO OSVALDO");
             Book[] b = digLibSessionRI.search("systems","Tanenbaum");
             for (Book bb: b) {

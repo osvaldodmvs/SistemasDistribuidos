@@ -1,11 +1,7 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
-import io.github.cdimascio.dotenv.Dotenv;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Date;
 
@@ -17,38 +13,30 @@ public class User {
 
     private String uname;
     private String pword;
-    private String jwt;
+    private static SecretKey key=io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public User(String uname, String pword) {
         this.uname = uname;
         this.pword = pword;
     }
-    public User(String uname, String pword, String jwt) {
-        this.uname = uname;
-        this.pword = pword;
-        this.jwt=jwt;
-    }
-
 
 
     public static String generateJWT(String username) {
         long currentTimeMillis = System.currentTimeMillis();
         Date expirationTime = new Date(currentTimeMillis + 3600000); // 1 hour
 
-        Dotenv dotenv = Dotenv.configure().load();
 
         return Jwts.builder()
                 .setSubject(username)
                 .setExpiration(expirationTime)
-                .signWith(SignatureAlgorithm.HS256, dotenv.get("SECRET_KEY"))
+                .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
 
     public static boolean verifyJWT(String jwt) {
         try {
-            Dotenv dotenv = Dotenv.configure().load();
             Jws<Claims> parsedJwt = Jwts.parser()
-                    .setSigningKey(dotenv.get("SECRET_KEY"))
+                    .setSigningKey(key)
                     .parseClaimsJws(jwt);
 
             return parsedJwt.getBody().getSubject().equals(jwt);

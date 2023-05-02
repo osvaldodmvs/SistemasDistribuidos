@@ -26,9 +26,9 @@ public class DBMockup {
      * @param u username
      * @param p passwd
      */
-    public void register(String u, String p, String jwt) {
+    public void register(String u, String p) {
         if (!exists(u)) {
-            users.add(new User(u, p, jwt));
+            users.add(new User(u, p));
         }
     }
 

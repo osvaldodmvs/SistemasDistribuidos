@@ -16,7 +16,7 @@ import java.util.Properties;
  * @version 0.2
  */
 public class Save {
-	final String path = "saves/";
+	final String path = "C:\\Users\\Osvaldo\\IdeaProjects\\SD\\saves\\";
 	
 	public void SaveSettings() {
 		//If the folder doesn't exist, create it so we can save our save files inside it.
@@ -46,7 +46,7 @@ public class Save {
 		try {
 			//Opens the property file and starts a battle with the map in the save folder. 
 			Properties configFile = new Properties();
-			configFile.load(new FileInputStream(System.getProperty("user.dir") + "/" + path + "PlayerData.properties"));
+			configFile.load(new FileInputStream("C:\\Users\\Osvaldo\\IdeaProjects\\SD\\saves\\PlayerData.properties"));
 
 			Game.dev = ( Boolean.parseBoolean(configFile.getProperty("Dev", "false")));
 			Game.gui.ResizeScreen( Integer.parseInt(configFile.getProperty("ScreenSize", "32")));

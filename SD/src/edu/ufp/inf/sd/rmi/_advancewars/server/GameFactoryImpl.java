@@ -8,6 +8,8 @@ import java.util.HashMap;
 import static edu.ufp.inf.sd.rmi._advancewars.server.User.generateJWT;
 
 
+
+//criar sessoes de utilizadores
 public class GameFactoryImpl extends UnicastRemoteObject implements GameFactoryRI {
 
     private DBMockup db;
@@ -23,8 +25,7 @@ public class GameFactoryImpl extends UnicastRemoteObject implements GameFactoryR
         if(db.exists(username)){
             return false;
         }
-        //String jwt = generateJWT(username);
-        db.register(username, pwd, "random jwt");
+        db.register(username, pwd);
         return true;
     }
 
@@ -33,6 +34,7 @@ public class GameFactoryImpl extends UnicastRemoteObject implements GameFactoryR
         if(db.exists(username)) {
             if (db.validate(username, pwd)) {
                 if (sessions.containsKey(username)) {
+                    //refresh token
                     return sessions.get(username);
                 } else {
                     GameSessionImpl session = new GameSessionImpl(this, username);

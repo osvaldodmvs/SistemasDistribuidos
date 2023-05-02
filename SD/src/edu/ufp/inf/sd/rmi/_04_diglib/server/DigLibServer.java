@@ -34,7 +34,7 @@ public class DigLibServer {
     /**
      * Remote interface that will hold reference MAIL_TO_ADDR the Servant impl
      */
-    private GameFactoryRI GameFactoryRI;
+    private DigLibFactoryRI diglibFactoryRI;
 
     public static void main(String[] args) {
         if (args != null && args.length < 3) {
@@ -80,7 +80,7 @@ public class DigLibServer {
             //Bind service on rmiregistry and wait for calls
             if (registry != null) {
                 //============ Create Servant ============
-                GameFactoryRI = new GameFactoryImpl();
+                diglibFactoryRI = new DigLibFactoryImpl();
 
                 //Get service url (including servicename)
                 String serviceUrl = contextRMI.getServicesUrl(0);
@@ -88,7 +88,7 @@ public class DigLibServer {
 
                 //============ Rebind servant ============
                 //Naming.bind(serviceUrl, helloWorldRI);
-                registry.rebind(serviceUrl, GameFactoryRI);
+                registry.rebind(serviceUrl, diglibFactoryRI);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "service bound and running. :)");
             } else {
                 //System.out.println("HelloWorldServer - Constructor(): create registry on port 1099");
