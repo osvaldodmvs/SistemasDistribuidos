@@ -11,7 +11,8 @@
     <orderEntry type="library" name="slf4j.simple" level="project" />
     <orderEntry type="library" name="javax.activation-1.2.0" level="project" />
     <orderEntry type="library" name="javax.mail-1.6.2" level="project" />
-    <orderEntry type="library" name="dotenv-java-2.2.0" level="project" />
-    <orderEntry type="library" name="jjwt-0.9.1" level="project" />
+    <orderEntry type="library" name="dotenv-java-2.3.2" level="project" />
+    <orderEntry type="library" name="io.jsonwebtoken.jjwt.api" level="project" />
+    <orderEntry type="library" name="io.jsonwebtoken.jjwt.impl" level="project" />
   </component>
 </module>

@@ -23,8 +23,8 @@ public class GameFactoryImpl extends UnicastRemoteObject implements GameFactoryR
         if(db.exists(username)){
             return false;
         }
-        String jwt = generateJWT(username);
-        db.register(username, pwd, jwt);
+        //String jwt = generateJWT(username);
+        db.register(username, pwd, "random jwt");
         return true;
     }
 
@@ -56,4 +56,11 @@ public class GameFactoryImpl extends UnicastRemoteObject implements GameFactoryR
         this.getSessions().remove(user);
     }
 
+    public DBMockup getDb() {
+        return db;
+    }
+
+    public void setDb(DBMockup db) {
+        this.db = db;
+    }
 }

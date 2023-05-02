@@ -139,15 +139,15 @@ public class GameClient {
                         JOptionPane.showMessageDialog(frame, "User doesn't exist or wrong credentials");
                     }
                     else {
-                        boolean isJwtValid = verifyJWT(gameSessionRI.getuser());
+                        //boolean isJwtValid = verifyJWT(gameSessionRI.getuser());
 
-                        if (!isJwtValid) {
-                            JOptionPane.showMessageDialog(frame, "User authenticated, but JWT is invalid or expired!");
-                        } else {
+                        //if (!isJwtValid) {
+                        //    JOptionPane.showMessageDialog(frame, "User authenticated, but JWT is invalid or expired!");
+                        //} else {
                             JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
                             //new Game();
                         }
-                    }
+                    //}
                 } catch (RemoteException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
@@ -160,10 +160,11 @@ public class GameClient {
                 String username = usernameField.getText();
                 String passwordString = String.valueOf(passwordField.getPassword());
                 try {
-                    if(!gameFactoryRI.register(username, passwordString)){
+                    if(!gameFactoryRI.register(username, passwordString))
+                    {
                         JOptionPane.showMessageDialog(frame, "Error, User already successfully!");
                     }
-                    else{
+                        else{
                         int option = JOptionPane.showOptionDialog(frame, "User registered successfully! Do you want to log in?",
                                 "Registration Successful", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new Object[]{"Yes", "No"},
                                 "Yes");

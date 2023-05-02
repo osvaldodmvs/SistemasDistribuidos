@@ -8,9 +8,9 @@ public class GameSessionImpl extends UnicastRemoteObject implements GameSessionR
     private GameFactoryImpl gameFactoryImpl;
     private String user;
 
-    public GameSessionImpl(GameFactoryImpl diglibFacImpl, String username) throws RemoteException {
+    public GameSessionImpl(GameFactoryImpl gameFactoryImpl, String username) throws RemoteException {
         super();
-        this.gameFactoryImpl = diglibFacImpl;
+        this.gameFactoryImpl = gameFactoryImpl;
         this.user = username;
     }
 

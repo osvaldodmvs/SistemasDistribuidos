@@ -1,7 +1,5 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
-import edu.ufp.inf.sd.rmi._advancewars.server.User;
-
 import java.util.ArrayList;
 
 /**

@@ -1,8 +1,12 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
+import java.util.Date;
 import java.util.Date;
 
 /**
@@ -25,25 +29,34 @@ public class User {
         this.jwt=jwt;
     }
 
+
+
     public static String generateJWT(String username) {
         long currentTimeMillis = System.currentTimeMillis();
         Date expirationTime = new Date(currentTimeMillis + 3600000); // 1 hour
 
         Dotenv dotenv = Dotenv.configure().load();
 
-        return Jwts.builder().setSubject(username).setExpiration(expirationTime).signWith(SignatureAlgorithm.HS256, dotenv.get("SECRET_KEY")).compact();
+        return Jwts.builder()
+                .setSubject(username)
+                .setExpiration(expirationTime)
+                .signWith(SignatureAlgorithm.HS256, dotenv.get("SECRET_KEY"))
+                .compact();
     }
 
     public static boolean verifyJWT(String jwt) {
         try {
             Dotenv dotenv = Dotenv.configure().load();
-            Jws<Claims> parsedJwt  = Jwts.parser().setSigningKey(dotenv.get("SECRET_KEY")).parseClaimsJws(jwt);
+            Jws<Claims> parsedJwt = Jwts.parser()
+                    .setSigningKey(dotenv.get("SECRET_KEY"))
+                    .parseClaimsJws(jwt);
 
-            return parsedJwt .getBody().getSubject().equals(jwt);
+            return parsedJwt.getBody().getSubject().equals(jwt);
         } catch (Exception e) {
             return false;
         }
     }
+
 
     @Override
     public String toString() {
