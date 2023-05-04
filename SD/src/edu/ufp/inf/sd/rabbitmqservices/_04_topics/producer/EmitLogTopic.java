@@ -93,10 +93,10 @@ public class EmitLogTopic {
         //Routing keys will have two words: <facility.severity> e.g. "kern.critical"
 
         // TODO: Get routing key from args[3]
-        String routingKey="";
+        String routingKey=args[3];
 
         // TODO: Get message from args[4]
-        String message="";
+        String message=args[4];
 
 
         /* try-with-resources will close resources automatically in reverse order... avoids finally */
@@ -104,13 +104,15 @@ public class EmitLogTopic {
              Channel channel=RabbitUtils.createChannel2Server(connection)) {
 
             // TODO: Declare exchange of type TOPIC
+            System.out.println(" [x] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.TOPIC.toString());
 
+            channel.exchangeDeclare(exchangeName,BuiltinExchangeType.TOPIC);
 
             //Messages are not persisted (will be lost if no queue is bound to exchange yet)
             BasicProperties props=null;//=MessageProperties.PERSISTENT_TEXT_PLAIN
 
             // TODO: Publish message on exchange with routing key
-
+            channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
 
             System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
 

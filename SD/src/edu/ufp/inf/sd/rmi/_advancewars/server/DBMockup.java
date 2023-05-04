@@ -1,5 +1,7 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
+import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+
 import java.util.ArrayList;
 
 /**
@@ -11,12 +13,14 @@ import java.util.ArrayList;
 public class DBMockup {
 
     private final ArrayList<User> users;// = new ArrayList();
+    private final ArrayList<Game> games;// = new ArrayList();
 
     /**
      * This constructor creates and inits the database with some books and users.
      */
     public DBMockup() {
         users = new ArrayList<>();
+        games = new ArrayList<>();
         //Add 3 books
     }
 

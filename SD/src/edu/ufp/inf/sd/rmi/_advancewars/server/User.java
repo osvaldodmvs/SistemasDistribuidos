@@ -13,7 +13,7 @@ public class User {
 
     private String uname;
     private String pword;
-    private static SecretKey key=io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    //private static SecretKey key=io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public User(String uname, String pword) {
         this.uname = uname;
@@ -21,7 +21,7 @@ public class User {
     }
 
 
-    public static String generateJWT(String username) {
+    /*public static String generateJWT(String username) {
         long currentTimeMillis = System.currentTimeMillis();
         Date expirationTime = new Date(currentTimeMillis + 3600000); // 1 hour
 
@@ -43,7 +43,7 @@ public class User {
         } catch (Exception e) {
             return false;
         }
-    }
+    }*/
 
 
     @Override
@@ -79,11 +79,11 @@ public class User {
         this.pword = pword;
     }
 
-    public String getJwt() {
+    /*public String getJwt() {
         return jwt;
     }
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
-    }
+    }*/
 }

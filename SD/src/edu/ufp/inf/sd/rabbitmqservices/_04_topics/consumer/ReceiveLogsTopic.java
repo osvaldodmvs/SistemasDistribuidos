@@ -37,14 +37,14 @@ public class ReceiveLogsTopic {
         try {
 
             // TODO: Create a channel to RabbitMQ
-
+            Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+            Channel channel=RabbitUtils.createChannel2Server(connection);
 
             // TODO: Declare exchange of type TOPIC
-
+            channel.exchangeDeclare(exchangeName,BuiltinExchangeType.TOPIC);
 
             // TODO: Create a non-durable, exclusive, autodelete queue with a generated name
-            String queueName="";
-
+            String queueName=channel.queueDeclare().getQueue();
 
             System.out.println("main(): argv.length=" + args.length);
 
@@ -58,8 +58,8 @@ public class ReceiveLogsTopic {
                 String bindingKey = args[i];
                 System.err.println("main(): add queue bind to queue = " + queueName + ", with bindingKey = " + bindingKey);
 
-                // TODO: Create binding: tell exchange to send messages to a queue
-
+                // TODO: Create binding: tell exchange to send messages to a queu
+                channel.queueBind(queueName,exchangeName,bindingKey);
 
             }
 
@@ -76,7 +76,7 @@ public class ReceiveLogsTopic {
             };
 
             // TODO: Consume with deliver and cancel callbacks
-
+            channel.basicConsume(queueName,true,deliverCallback,cancelCallback);
 
             //Current Thread waits till interrupted (avoids finishing try-with-resources which closes channel)
             //Thread.currentThread().join();

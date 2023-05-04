@@ -6,10 +6,13 @@ import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.registry.Registry;
+import java.sql.SQLOutput;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -17,8 +20,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static edu.ufp.inf.sd.rmi._advancewars.server.User.generateJWT;
-import static edu.ufp.inf.sd.rmi._advancewars.server.User.verifyJWT;
+//import static edu.ufp.inf.sd.rmi._advancewars.server.User.generateJWT;
+//import static edu.ufp.inf.sd.rmi._advancewars.server.User.verifyJWT;
 
 public class GameClient {
 
@@ -82,39 +85,77 @@ public class GameClient {
         }
         return gameFactoryRI;
     }
-    
-    /*private void playService() {
-        try {
-            Scanner sc = new Scanner(System.in);
 
-            System.out.print("Enter your name: ");
-            String username = sc.nextLine();
-
-            System.out.print("Enter your password: ");
-            String password = sc.nextLine();
-
-            gameFactoryRI.register(username,password);
-
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Registered, [" + username + "]");
-
-            GameSessionRI gameSessionRI = gameFactoryRI.login(username,password);
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Logged in, hello [" + username + "]");
-
-            System.out.println("------- Testing method only, sleeping for 2s -------");
-            try {
-                Thread.sleep(2000); // Sleep for 2 seconds
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    public void loginSwitch(String choice) {
+        Scanner sc = new Scanner(System.in);
+        String username;
+        String password;
+        switch (choice) {
+            case "1": {
+                System.out.print("Username : ");
+                username = sc.nextLine();
+                System.out.print("Password : ");
+                password = sc.nextLine();
+                try {
+                    GameSessionRI logged = gameFactoryRI.login(username, password);
+                    if (logged == null) {
+                        System.out.println("Wrong credentials or user doesnt exist!");
+                        loginSwitch(choice);
+                        break;
+                    }
+                    System.out.println("Logged in successfully!");
+                    new Game();
+                } catch (RemoteException ex) {
+                    System.out.println("REMOTE EXCEPTION ERROR");
+                }
+                break;
             }
-            gameSessionRI.logout();
-
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Logged out, goodbye");
-        } catch (RemoteException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            case "2": {
+                System.out.print("Username : ");
+                username = sc.nextLine();
+                System.out.print("Password : ");
+                password = sc.nextLine();
+                try {
+                    boolean logged = gameFactoryRI.register(username, password);
+                    if (!logged) {
+                        System.out.println("User already exists!");
+                        loginSwitch(choice);
+                        break;
+                    }
+                    System.out.println("Registered successfully! Would you like to login? [y] or [n]");
+                    if (sc.nextLine().compareTo("y") == 0) {
+                        gameFactoryRI.login(username, password);
+                        System.out.println("Logged in successfully!");
+                    } else {
+                        playService();
+                        break;
+                    }
+                    new Game();
+                } catch (RemoteException ex) {
+                    System.out.println("REMOTE EXCEPTION ERROR");
+                    break;
+                }
+            }
+            default: playService();
         }
-    }*/
+    }
+
 
     private void playService() {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Login [1]");
+        System.out.println("Register [2]");
+
+        System.out.print("Choose your option: ");
+        String choice = sc.nextLine();
+
+        loginSwitch(choice);
+
+
+    }
+
+    /*private void playService() {
         JFrame frame = new JFrame("User Login/Registration");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 200);
@@ -140,17 +181,17 @@ public class GameClient {
                         JOptionPane.showMessageDialog(frame, "User doesn't exist or wrong credentials");
                     }
                     else {
-                        boolean isJwtValid = verifyJWT(gameSessionRI.getuser());
+                        //boolean isJwtValid = verifyJWT(gameSessionRI.getuser());
 
-                        if (!isJwtValid) {
+                        //if (!isJwtValid) {
                             JOptionPane.showMessageDialog(frame, "User authenticated, but JWT is invalid or expired!");
-                        } else {
-                            JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
-                        frame.setVisible(false);
-                        frame.dispose();
+                        //} else {
+                        JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
+                        //frame.setVisible(false);
+                        //frame.dispose();
                         new Game();
                     }
-                    }
+                    //}
                 } catch (RemoteException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
@@ -175,8 +216,8 @@ public class GameClient {
                             // Open the login window or perform login logic
                             GameSessionRI gameSessionRI = gameFactoryRI.login(username,passwordString);
                             JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
-                            frame.setVisible(false);
-                            frame.dispose();
+                            //frame.setVisible(false);
+                            //frame.dispose();
                             new Game();
                         } else {
                             // Clear the fields or perform any other desired action
@@ -201,7 +242,7 @@ public class GameClient {
         frame.setVisible(true);
 
         //new Game();
-    }
+    }*/
 }
 
 

@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
-import static edu.ufp.inf.sd.rmi._advancewars.server.User.generateJWT;
+//import static edu.ufp.inf.sd.rmi._advancewars.server.User.generateJWT;
 
 
 

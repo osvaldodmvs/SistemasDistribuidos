@@ -67,10 +67,10 @@ public class Observer {
         this.general=general;
 
         // TODO: Set 2 binding keys (to receive msg from public room.general and private room.user
-        String bingingKeys[]={"", ""};
+        String bindingKeys[]={room+"."+general, room+"."+user};
 
 
-        this.exchangeBindingKeys=bingingKeys;
+        this.exchangeBindingKeys=bindingKeys;
         this.messageFormat=messageFormat;
 
         bindExchangeToChannelRabbitMQ();
@@ -84,7 +84,7 @@ public class Observer {
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Declaring Exchange '" + this.exchangeName + "' with policy = " + this.exchangeType);
 
         // TODO: Declare exchange type
-
+        channelToRabbitMq.exchangeDeclare(exchangeName,BuiltinExchangeType.TOPIC);
     }
 
     /**
@@ -93,10 +93,16 @@ public class Observer {
     private void attachConsumerToChannelExchangeWithKey() {
         try {
             // TODO: Create a non-durable, exclusive, autodelete queue with a generated name.
-
+            String queueName =channelToRabbitMq.queueDeclare().getQueue();
 
             // TODO: Bind to each routing key (received from args[3] upward)
+            for (String bindingKey : exchangeBindingKeys) {
+                System.err.println("main(): add queue bind to queue = " + queueName + ", with bindingKey = " + bindingKey);
 
+                // TODO: Create binding: tell exchange to send messages to a queue
+                channelToRabbitMq.queueBind(queueName, exchangeName, bindingKey);
+
+            }
 
             /* Use a DeliverCallback lambda function instead of DefaultConsumer to receive messages from queue;
                DeliverCallback is an interface which provides a single method:
@@ -107,12 +113,12 @@ public class Observer {
                 System.out.println(" [x] Received '" + message + "'");
                 gui.updateTextArea();
             };
-            CancelCallback cancelCalback=consumerTag -> {
+            CancelCallback cancelCallback=consumerTag -> {
                 System.out.println(" [x] CancelCallback invoked");
             };
 
             // TODO: Consume with deliver and cancel callbacks
-
+            channelToRabbitMq.basicConsume(queueName,true,deliverCallback,cancelCallback);
 
         } catch (Exception e) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.toString());
@@ -129,7 +135,7 @@ public class Observer {
         //User maybe some <username> (private msg) or 'general' (public msg for all)
 
         // TODO: Publish message with routing key
-
+        channelToRabbitMq.basicPublish(exchangeName, this.room+"."+user, null, msgToSend.getBytes("UTF-8"));
     }
 
     /**
