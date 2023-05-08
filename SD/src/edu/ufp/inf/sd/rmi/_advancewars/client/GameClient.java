@@ -6,22 +6,18 @@ import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 
-import java.io.IOException;
+
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.registry.Registry;
-import java.sql.SQLOutput;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-//import static edu.ufp.inf.sd.rmi._advancewars.server.User.generateJWT;
-//import static edu.ufp.inf.sd.rmi._advancewars.server.User.verifyJWT;
+
 
 public class GameClient {
 
@@ -33,9 +29,6 @@ public class GameClient {
      * Remote interface that will hold the Servant proxy
      */
     private GameFactoryRI gameFactoryRI;
-
-    private static JTextField usernameField;
-    private static JPasswordField passwordField;
 
     public static void main(String[] args) {
         if (args != null && args.length < 2) {
@@ -104,9 +97,11 @@ public class GameClient {
                         break;
                     }
                     System.out.println("Logged in successfully!");
-                    new Game();
+                    new Game(logged);
                 } catch (RemoteException ex) {
-                    System.out.println("REMOTE EXCEPTION ERROR");
+                    System.out.println("REMOTE EXCEPTION ERROR" + ex);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
                 }
                 break;
             }
@@ -116,24 +111,26 @@ public class GameClient {
                 System.out.print("Password : ");
                 password = sc.nextLine();
                 try {
-                    boolean logged = gameFactoryRI.register(username, password);
-                    if (!logged) {
+                    boolean registered = gameFactoryRI.register(username, password);
+                    if (!registered) {
                         System.out.println("User already exists!");
                         loginSwitch(choice);
                         break;
                     }
                     System.out.println("Registered successfully! Would you like to login? [y] or [n]");
                     if (sc.nextLine().compareTo("y") == 0) {
-                        gameFactoryRI.login(username, password);
+                        GameSessionRI logged=gameFactoryRI.login(username, password);
                         System.out.println("Logged in successfully!");
+                        new Game(logged);
                     } else {
                         playService();
                         break;
                     }
-                    new Game();
                 } catch (RemoteException ex) {
                     System.out.println("REMOTE EXCEPTION ERROR");
                     break;
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
                 }
             }
             default: playService();
@@ -151,98 +148,7 @@ public class GameClient {
         String choice = sc.nextLine();
 
         loginSwitch(choice);
-
-
     }
-
-    /*private void playService() {
-        JFrame frame = new JFrame("User Login/Registration");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 200);
-        frame.setLocationRelativeTo(null);
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 2));
-
-        JLabel usernameLabel = new JLabel("Username:");
-        JLabel passwordLabel = new JLabel("Password:");
-
-        usernameField = new JTextField();
-        passwordField = new JPasswordField();
-
-        JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText();
-                String passwordString = String.valueOf(passwordField.getPassword());
-                try {
-                    GameSessionRI gameSessionRI = gameFactoryRI.login(username,passwordString);
-                    if(gameSessionRI==null){
-                        JOptionPane.showMessageDialog(frame, "User doesn't exist or wrong credentials");
-                    }
-                    else {
-                        //boolean isJwtValid = verifyJWT(gameSessionRI.getuser());
-
-                        //if (!isJwtValid) {
-                            JOptionPane.showMessageDialog(frame, "User authenticated, but JWT is invalid or expired!");
-                        //} else {
-                        JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
-                        //frame.setVisible(false);
-                        //frame.dispose();
-                        new Game();
-                    }
-                    //}
-                } catch (RemoteException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-
-        JButton registerButton = new JButton("Register");
-        registerButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText();
-                String passwordString = String.valueOf(passwordField.getPassword());
-                try {
-                    if(!gameFactoryRI.register(username, passwordString))
-                    {
-                        JOptionPane.showMessageDialog(frame, "Error, User already successfully!");
-                    }
-                        else{
-                        int option = JOptionPane.showOptionDialog(frame, "User registered successfully! Do you want to log in?",
-                                "Registration Successful", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new Object[]{"Yes", "No"},
-                                "Yes");
-                        if (option == JOptionPane.YES_OPTION) {
-                            // Open the login window or perform login logic
-                            GameSessionRI gameSessionRI = gameFactoryRI.login(username,passwordString);
-                            JOptionPane.showMessageDialog(frame, "Logged in successfully, redirecting to game");
-                            //frame.setVisible(false);
-                            //frame.dispose();
-                            new Game();
-                        } else {
-                            // Clear the fields or perform any other desired action
-                            usernameField.setText("");
-                            passwordField.setText("");
-                        }
-                    }
-                } catch (RemoteException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-
-        panel.add(usernameLabel);
-        panel.add(usernameField);
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        panel.add(loginButton);
-        panel.add(registerButton);
-
-        frame.add(panel);
-        frame.setVisible(true);
-
-        //new Game();
-    }*/
 }
 
 

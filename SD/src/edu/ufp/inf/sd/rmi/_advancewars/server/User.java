@@ -1,50 +1,34 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.Date;
+import java.io.Serializable;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 /**
  *
  * @author rmoreira
  */
-public class User {
+public class User implements Serializable {
 
     private String uname;
     private String pword;
+    private String jwt;
     //private static SecretKey key=io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public User(String uname, String pword) {
         this.uname = uname;
         this.pword = pword;
     }
-
-
-    /*public static String generateJWT(String username) {
-        long currentTimeMillis = System.currentTimeMillis();
-        Date expirationTime = new Date(currentTimeMillis + 3600000); // 1 hour
-
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(expirationTime)
-                .signWith(SignatureAlgorithm.HS256, key)
-                .compact();
-    }
-
-    public static boolean verifyJWT(String jwt) {
-        try {
-            Jws<Claims> parsedJwt = Jwts.parser()
-                    .setSigningKey(key)
-                    .parseClaimsJws(jwt);
-
-            return parsedJwt.getBody().getSubject().equals(jwt);
-        } catch (Exception e) {
-            return false;
-        }
-    }*/
-
 
     @Override
     public String toString() {
@@ -79,11 +63,12 @@ public class User {
         this.pword = pword;
     }
 
-    /*public String getJwt() {
+    public String getJwt() {
         return jwt;
     }
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
-    }*/
+    }
+
 }

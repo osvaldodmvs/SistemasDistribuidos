@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.rmi.RemoteException;
 import javax.swing.JPanel;
 	
 public class Gui extends JPanel {
@@ -30,7 +31,7 @@ public class Gui extends JPanel {
 	}
 
 	/**Creates the Login screen layout*/
-	public void LoginScreen() {
+	public void LoginScreen() throws RemoteException {
 		Game.GameState=Game.State.MENU;
 		removeAll();
 		new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.StartMenu();

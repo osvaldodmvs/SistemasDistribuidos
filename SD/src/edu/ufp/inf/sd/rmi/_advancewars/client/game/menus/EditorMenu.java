@@ -3,6 +3,7 @@ package edu.ufp.inf.sd.rmi._advancewars.client.game.menus;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -106,7 +107,11 @@ public class EditorMenu implements ActionListener {
 			MenuHandler.CloseMenu();
 		}
 		else if (s==Quit) {
-			Game.gui.LoginScreen();
+			try {
+				Game.gui.LoginScreen();
+			} catch (RemoteException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 	}
 }

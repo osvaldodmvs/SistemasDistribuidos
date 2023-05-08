@@ -1,7 +1,7 @@
-package edu.ufp.inf.sd.rmi._05_observer.client;
+package edu.ufp.inf.sd.rmi._advancewars.client;
 
-import edu.ufp.inf.sd.rmi._05_observer.server.State;
-import edu.ufp.inf.sd.rmi._05_observer.server.SubjectRI;
+import edu.ufp.inf.sd.rmi._advancewars.server.State;
+import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,12 +16,9 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
     protected SubjectRI subjectRI;
 
-    protected ObserverGuiClient chatFrame;
-
-    public ObserverImpl(String id, ObserverGuiClient f, SubjectRI subjectRI) throws RemoteException {
+    public ObserverImpl(String id, SubjectRI subjectRI) throws RemoteException {
         super();
         this.id = id;
-        this.chatFrame = f;
         this.subjectRI = subjectRI;
         this.subjectRI.attach(this);
     }
@@ -30,7 +27,6 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
     public void update() {
         try {
             lastObserverState = subjectRI.getState();
-            chatFrame.updateTextArea();
         } catch (RemoteException ex) {
             Logger.getLogger(ObserverImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

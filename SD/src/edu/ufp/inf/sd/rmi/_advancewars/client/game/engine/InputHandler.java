@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.rmi.RemoteException;
 
 /**
  * Keyboard handling for the game along with the mouse setup for game handling.
@@ -75,7 +76,13 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 			}
 		}
 		
-		if (i==dev1) {Game.gui.LoginScreen();}
+		if (i==dev1) {
+			try {
+				Game.gui.LoginScreen();
+			} catch (RemoteException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
 		else if (i==dev2) {Game.load.LoadTexturePack("Test");}
 		else if (i==dev3) {
 			DevPathing++;
@@ -87,7 +94,13 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 		}
 		else if (i==dev4) {Game.btl.EndTurn();}
 		else if (i==dev5) {Game.player.get(Game.btl.currentplayer).npc = !Game.player.get(Game.btl.currentplayer).npc; Game.btl.EndTurn();}
-		else if (i==dev6) {new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.StartMenu();}
+		else if (i==dev6) {
+			try {
+				new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.StartMenu();
+			} catch (RemoteException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
 	}
 	public void keyReleased(KeyEvent e) {
 		int i=e.getKeyCode();

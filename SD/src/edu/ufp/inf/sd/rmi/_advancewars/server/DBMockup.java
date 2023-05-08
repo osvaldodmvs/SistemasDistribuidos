@@ -21,7 +21,6 @@ public class DBMockup {
     public DBMockup() {
         users = new ArrayList<>();
         games = new ArrayList<>();
-        //Add 3 books
     }
 
     /**
@@ -68,5 +67,23 @@ public class DBMockup {
         return false;
         //return ((u.equalsIgnoreCase("guest") && p.equalsIgnoreCase("ufp")) ? true : false);
     }
+
+    public User getUser(String username) {
+        for (User usr : this.users) {
+            if (usr.getUname().compareTo(username) == 0) {
+                return usr;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public ArrayList<Game> getGames() {
+        return games;
+    }
+
 
 }

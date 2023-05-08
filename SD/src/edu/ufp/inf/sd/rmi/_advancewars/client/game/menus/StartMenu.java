@@ -3,12 +3,11 @@ package edu.ufp.inf.sd.rmi._advancewars.client.game.menus;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
+import java.rmi.RemoteException;
+import javax.swing.*;
 
 import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rmi._advancewars.server.User;
 
 /**
  * This is the opening menu of the game.
@@ -31,15 +30,17 @@ public class StartMenu implements ActionListener {
 	
 	//Map list
 	public JList maps_list = new JList();
+	public JList games_list = new JList();
 	DefaultListModel maps_model = new DefaultListModel();
 	
-	public StartMenu() {
-		Point size = MenuHandler.PrepMenu(400,280);
+	public StartMenu() throws RemoteException {
+		Point size = MenuHandler.PrepMenu(600,280);
 		MenuHandler.HideBackground();
 		SetBounds(size);
 		AddGui();
 		AddListeners();
 		MapList(size);
+		GameList(size);
 	}
 
 	private void SetBounds(Point size) {
@@ -54,7 +55,7 @@ public class StartMenu implements ActionListener {
 	private void AddGui() {
 		Game.gui.add(New);
 		Game.gui.add(Load);
-		//Game.edu.ufp.inf.sd.rmi._advancewars.client.game.gui.add(Join);
+		//Game.gui.add(Join);
 		Game.gui.add(Editor);
 		Game.gui.add(Credits);
 		Game.gui.add(Options);
@@ -68,6 +69,19 @@ public class StartMenu implements ActionListener {
 		maps_list.setBounds(0, 0, 140, 260);
 		maps_list.setSelectedIndex(0);
 	}
+
+	private void GameList(Point size) throws RemoteException {
+		DefaultListModel games_model = new DefaultListModel();
+		for (Game g: Game.getGameSessionRI().getGames()) {
+			games_model.addElement(g.getId());
+		}
+		JScrollPane games_pane = new JScrollPane(games_list = new JList(games_model));
+		games_pane.setBounds(size.x+420, size.y+10, 140, 260);//420,10
+		Game.gui.add(games_pane);
+		games_list.setBounds(0, 0, 140, 260);
+		games_list.setSelectedIndex(0);
+	}
+
 	private void AddListeners() {
 		New.addActionListener(this);
 		Load.addActionListener(this);

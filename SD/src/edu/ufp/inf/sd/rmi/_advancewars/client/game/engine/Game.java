@@ -1,12 +1,20 @@
 package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
+import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
+import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
+
 import java.awt.Dimension;
 import java.awt.Image;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.swing.JFrame;
 
-public class Game extends JFrame {
+public class Game extends JFrame implements Serializable {
+	private final String id = UUID.randomUUID().toString();
+	private GameSessionRI gameSessionRI;
 	private static final long serialVersionUID = 1L;
 	
 	//Application Settings
@@ -54,8 +62,17 @@ public class Game extends JFrame {
 	public static List<edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base> displayB = new ArrayList<edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base>();
 	public static List<edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base> displayU = new ArrayList<edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base>();
 	
-	public Game() {super (name);
+	public Game(GameSessionRI gsRI) throws RemoteException{
+		super (name);
 		//Default Settings of the JFrame
+		gameSessionRI = gsRI;
+		gsRI.getGames().add(this);
+		System.out.println("Game created with id " + id);
+		System.out.println("GameSessionRI has " + gsRI.getGames().size() + " games");
+		//print all game ids in the array list gsRI.getGames()
+		for (Game g : gsRI.getGames()) {
+			System.out.println("Game id: " + g.getId());
+		}
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setSize(new Dimension(20*ScreenBase+6,12*ScreenBase+12));
 		setBounds(0,0,20*ScreenBase+6,12*ScreenBase+12);
@@ -130,7 +147,15 @@ public class Game extends JFrame {
 			try { Thread.sleep(30);} catch (Exception e) {};
 		}
 	}
-	
+
+	public String getId() {
+		return id;
+	}
+
+	public GameSessionRI getGameSessionRI() {
+		return gameSessionRI;
+	}
+
 	/**Starts a new game when launched.*/
-	public static void main(String args[]) throws Exception {new Game();}
+	public static void main(String args[]) throws Exception {}
 }

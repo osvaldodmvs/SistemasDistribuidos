@@ -3,6 +3,7 @@ package edu.ufp.inf.sd.rmi._advancewars.client.game.menus;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -96,7 +97,13 @@ public class Options implements ActionListener,ChangeListener {
 		if (s == Close) {
 			Game.save.SaveSettings();
 			MenuHandler.CloseMenu();
-			if (Game.GameState == Game.State.MENU) {new StartMenu();}
+			if (Game.GameState == Game.State.MENU) {
+				try {
+					new StartMenu();
+				} catch (RemoteException ex) {
+					throw new RuntimeException(ex);
+				}
+			}
 		}
 		else if (s == Load) {new TexturePack();}
 		else if (s == ChangeSize) {Game.gui.ResizeScreen(Screen.getValue());}

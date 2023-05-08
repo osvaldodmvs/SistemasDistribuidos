@@ -1,7 +1,11 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
+import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+
 //metodos a chamar quando a sessao esta criada
 public class GameSessionImpl extends UnicastRemoteObject implements GameSessionRI {
 
@@ -23,8 +27,7 @@ public class GameSessionImpl extends UnicastRemoteObject implements GameSessionR
     }
 
     @Override
-    public String getuser() throws RemoteException {
-        return this.user;
+    public ArrayList<Game> getGames() throws RemoteException {
+        return gameFactoryImpl.getDb().getGames();
     }
-
 }

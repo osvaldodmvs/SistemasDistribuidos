@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
@@ -85,6 +86,8 @@ public class GameServer {
             }
         } catch (RemoteException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 
