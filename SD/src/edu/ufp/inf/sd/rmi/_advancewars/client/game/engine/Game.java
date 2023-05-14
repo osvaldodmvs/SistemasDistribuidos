@@ -1,7 +1,10 @@
 package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
+import edu.ufp.inf.sd.rmi._advancewars.client.ObserverImpl;
+import edu.ufp.inf.sd.rmi._advancewars.client.ObserverRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
+import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -13,8 +16,10 @@ import java.util.UUID;
 import javax.swing.JFrame;
 
 public class Game extends JFrame implements Serializable {
-	private final String id = UUID.randomUUID().toString();
-	private GameSessionRI gameSessionRI;
+	private final String id = UUID.randomUUID().toString();;
+	private ObserverRI observer;
+	private static GameSessionRI gameSessionRI;
+
 	private static final long serialVersionUID = 1L;
 	
 	//Application Settings
@@ -65,14 +70,9 @@ public class Game extends JFrame implements Serializable {
 	public Game(GameSessionRI gsRI) throws RemoteException{
 		super (name);
 		//Default Settings of the JFrame
-		gameSessionRI = gsRI;
-		gsRI.getGames().add(this);
-		System.out.println("Game created with id " + id);
-		System.out.println("GameSessionRI has " + gsRI.getGames().size() + " games");
-		//print all game ids in the array list gsRI.getGames()
-		for (Game g : gsRI.getGames()) {
-			System.out.println("Game id: " + g.getId());
-		}
+		//TODO : criar um observerImpl;
+		//gameSessionRI = gsRI;
+		//gsRI.addGame(this);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setSize(new Dimension(20*ScreenBase+6,12*ScreenBase+12));
 		setBounds(0,0,20*ScreenBase+6,12*ScreenBase+12);
@@ -152,10 +152,10 @@ public class Game extends JFrame implements Serializable {
 		return id;
 	}
 
-	public GameSessionRI getGameSessionRI() {
+	public static GameSessionRI getGameSessionRI() {
 		return gameSessionRI;
 	}
 
 	/**Starts a new game when launched.*/
-	public static void main(String args[]) throws Exception {}
+	public static void main(String args[]) throws Exception {new Game(null);}
 }

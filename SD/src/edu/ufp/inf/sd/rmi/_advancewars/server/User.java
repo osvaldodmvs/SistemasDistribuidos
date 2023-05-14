@@ -23,7 +23,6 @@ public class User implements Serializable {
     private String uname;
     private String pword;
     private String jwt;
-    //private static SecretKey key=io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public User(String uname, String pword) {
         this.uname = uname;

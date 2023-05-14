@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class DBMockup {
 
     private final ArrayList<User> users;// = new ArrayList();
-    private final ArrayList<Game> games;// = new ArrayList();
+    private final ArrayList<GameLobby> games;// = new ArrayList();
 
     /**
      * This constructor creates and inits the database with some books and users.
@@ -81,9 +81,20 @@ public class DBMockup {
         return users;
     }
 
-    public ArrayList<Game> getGames() {
+    public ArrayList<GameLobby> getGames() {
         return games;
     }
 
+    public void addGame(GameLobby game) {
+        games.add(game);
+    }
 
+    public GameLobby getGame(String g) {
+        for (GameLobby game : this.games) {
+            if (game.getId().compareTo(g) == 0) {
+                return game;
+            }
+        }
+        return null;
+    }
 }

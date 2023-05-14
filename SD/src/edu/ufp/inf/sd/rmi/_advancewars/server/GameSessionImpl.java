@@ -1,7 +1,5 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -27,7 +25,27 @@ public class GameSessionImpl extends UnicastRemoteObject implements GameSessionR
     }
 
     @Override
-    public ArrayList<Game> getGames() throws RemoteException {
+    public String getOwnId() throws RemoteException {
+        return gameFactoryImpl.getDb().getUser(user).getJwt();
+    }
+
+    @Override
+    public ArrayList<GameLobby> getGames() throws RemoteException {
         return gameFactoryImpl.getDb().getGames();
     }
+
+    @Override
+    public GameLobby addGame(String map, String ID) throws RemoteException {
+        //criar gamelobby e adicionar-se ao array de jogadores (com attach)
+        GameLobby g = new GameLobby(map,ID);
+        gameFactoryImpl.getDb().addGame(g);
+        return g;
+    }
+
+    @Override
+    public GameLobby joinGame(String g) throws RemoteException {
+        //adicionar-se ao array de jogadores (com attach)
+        return gameFactoryImpl.getDb().getGame(g);
+    }
+
 }
