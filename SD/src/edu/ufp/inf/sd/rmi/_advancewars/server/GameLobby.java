@@ -1,26 +1,16 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.ObserverRI;
-
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.UUID;
 
-public class GameLobby {
+public class GameLobby implements Serializable {
 
 	private String id;
-
-	private int numPlayers;
+	private int numPlayers = 0;
 	//numero de jogadores
-
 	private int maxPlayers;
-
-	/*********
-	 * 	private ArrayList<ObserverRI> players;
-	 * 	//arraylist de jogadores (observer RI)
-	 * 	faria mais sentido um SubjectRI ? o jogo seria o necessario a observar e por sua vez teria os jogadores como observers?
-	 *********/
-
+	private ArrayList<Integer> commanders = new ArrayList<>();
 	private SubjectRI subject;
 	private String map;
 	//mapa
@@ -31,7 +21,6 @@ public class GameLobby {
 
 	public GameLobby() {
 		this.setNumPlayers(0);
-		//this.setPlayers(new ArrayList<>());
 		this.setState("WAITING");
 	}
 
@@ -39,9 +28,9 @@ public class GameLobby {
 		this.setId(ID);
 		this.setMap(map);
 		this.setMaxPlayers(playersbymap(map));
+		System.out.println("Max players: <"+this.getMaxPlayers()+">");
 		this.setNumPlayers(1);
 		this.subject = new SubjectImpl(new State(id,"WAITING"));
-		//this.setPlayers(new ArrayList<>());
 		this.setState("WAITING");
 	}
 
@@ -60,14 +49,6 @@ public class GameLobby {
 	public void setNumPlayers(int numPlayers) {
 		this.numPlayers = numPlayers;
 	}
-
-	/*public ArrayList<ObserverRI> getPlayers() {
-		return players;
-	}
-
-	public void setPlayers(ArrayList<ObserverRI> players) {
-		this.players = players;
-	}*/
 
 	public SubjectRI getSubject() {
 		return subject;
@@ -101,10 +82,31 @@ public class GameLobby {
 		this.state = state;
 	}
 
+	public ArrayList<Integer> getCommanders() {
+		return commanders;
+	}
+
+	public void setCommanders(ArrayList<Integer> commanders) {
+		this.commanders = commanders;
+	}
+
 	public int playersbymap(String map){
 		if(map.compareTo("FourCorners")==0){
 			return 4;
 		}
 		return 2;
+	}
+
+	public int[] getArrayOfCommanders(){
+		int[] array = new int[commanders.size()];
+		for(int i = 0; i < commanders.size(); i++){
+			array[i] = commanders.get(i);
+		}
+		return array;
+	}
+
+	@Override
+	public String toString() {
+		return map + " / players : " + numPlayers + "/" + maxPlayers + " / State : " + state + " / ID : " + id;
 	}
 }

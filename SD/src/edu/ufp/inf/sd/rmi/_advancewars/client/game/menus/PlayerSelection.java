@@ -22,7 +22,8 @@ public class PlayerSelection implements ActionListener {
 	//TODO: Scale with map size.
 	//Commander Selection
 	String pressed;
-	String gameID;
+	String gameIDtoJoin;
+	Game g;
 	JButton Prev = new JButton("Prev");
 	JButton Next = new JButton("Next");
 	JLabel Name = new JLabel("Andy");
@@ -30,7 +31,7 @@ public class PlayerSelection implements ActionListener {
 	
 	//NPC Stuff
 	JButton ManOrMachine = new JButton("PLY");
-	boolean npc = false;
+	boolean[] npc = {false,false,false,false};
 	
 	//Other
 	JButton Return = new JButton("Return");
@@ -40,7 +41,8 @@ public class PlayerSelection implements ActionListener {
 	
 	String mapname;
 	
-	public PlayerSelection(String pressed, String map) {
+	public PlayerSelection(String pressed, String map, Game game) {
+		this.g = game;
 		this.pressed = pressed;
 		this.mapname = map;
 		Point size = MenuHandler.PrepMenu(275,200);
@@ -60,9 +62,12 @@ public class PlayerSelection implements ActionListener {
 		AddListeners();
 	}
 
-	public PlayerSelection(String pressed, String map, String gameID) {
+	public PlayerSelection(String pressed, String map, String gameIDtoJoin, Game gameIam){
 		this.pressed = pressed;
-		this.gameID = gameID;
+		this.mapname = map;
+		this.g = gameIam;
+		this.gameIDtoJoin = gameIDtoJoin;
+		System.out.println("Mapa : <"+mapname+">");
 		Point size = MenuHandler.PrepMenu(275,200);
 		Prev.addActionListener(this);
 		Prev.setBounds(size.x+10+84, size.y+10, 64, 32);
@@ -110,26 +115,29 @@ public class PlayerSelection implements ActionListener {
 			//TODO : que botao foi clicado, new ou join para saber se chama addGame ou joinGame
 			if(pressed.compareTo("New")==0){
 				try {
-					GameLobby gg = Game.getGameSessionRI().addGame(mapname,gameID);
-					ObserverRI o = new ObserverImpl(gameID,gg.getSubject());
+					GameLobby gg = Game.getGameSessionRI().addGame(mapname,gameIDtoJoin,plyer);
+					new ObserverImpl(g.getId(),gg.getSubject(),g,gg);
 					//TODO : obrigar o utilizador a esperar
+					MenuHandler.CloseMenu();
+					return;
 				} catch (RemoteException ex) {
 					throw new RuntimeException(ex);
 				}
 			}
+			//TODO : criar array de comandantes no gamelobby e adicionar a esse array todos os comandantes selecionados (com new e join)
 			else if(pressed.compareTo("Join")==0){
 				try {
-					GameLobby gg = Game.getGameSessionRI().joinGame(gameID);
-					ObserverRI o = new ObserverImpl(gameID,gg.getSubject());
+					GameLobby gg = Game.getGameSessionRI().joinGame(gameIDtoJoin,plyer);
+					if(gg!=null){
+						new ObserverImpl(g.getId(),gg.getSubject(),g,gg);
+					}
 					//TODO : verificar se o jogo reune as condiçoes para começar e se sim, começar
+					MenuHandler.CloseMenu();
+					return;
 				} catch (RemoteException ex) {
 					throw new RuntimeException(ex);
 				}
 			}
-			MenuHandler.CloseMenu();
-			Game.btl.NewGame(mapname);
-			//Game.btl.AddCommanders(plyer, npc, 100, 50);
-			Game.gui.InGameScreen();
 		}
 		if (s == Prev) {
 			plyer--;

@@ -34,7 +34,7 @@ public class Gui extends JPanel {
 	public void LoginScreen() throws RemoteException {
 		Game.GameState=Game.State.MENU;
 		removeAll();
-		new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.StartMenu();
+		new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.StartMenu(ThisMadeMeWantToRageQuit);
 		if (Game.error.showing) {add(Game.error);}
 	}
 	/**Creates the InGame screen layout*/

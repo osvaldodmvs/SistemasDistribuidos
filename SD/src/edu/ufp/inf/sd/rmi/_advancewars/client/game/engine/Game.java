@@ -2,7 +2,9 @@ package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
 import edu.ufp.inf.sd.rmi._advancewars.client.ObserverImpl;
 import edu.ufp.inf.sd.rmi._advancewars.client.ObserverRI;
+import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
+import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
 
@@ -16,7 +18,7 @@ import java.util.UUID;
 import javax.swing.JFrame;
 
 public class Game extends JFrame implements Serializable {
-	private final String id = UUID.randomUUID().toString();;
+	private final String id = UUID.randomUUID().toString();
 	private ObserverRI observer;
 	private static GameSessionRI gameSessionRI;
 
@@ -71,8 +73,7 @@ public class Game extends JFrame implements Serializable {
 		super (name);
 		//Default Settings of the JFrame
 		//TODO : criar um observerImpl;
-		//gameSessionRI = gsRI;
-		//gsRI.addGame(this);
+		gameSessionRI = gsRI;
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setSize(new Dimension(20*ScreenBase+6,12*ScreenBase+12));
 		setBounds(0,0,20*ScreenBase+6,12*ScreenBase+12);
@@ -154,6 +155,17 @@ public class Game extends JFrame implements Serializable {
 
 	public static GameSessionRI getGameSessionRI() {
 		return gameSessionRI;
+	}
+
+	public void Start() throws RemoteException {
+		GameLobby gl = gameSessionRI.getGameIDfromLobby(id);
+		System.out.println("MY ID IS " + id + " AND I FOUND LOBBY GL WITH ID: "+gl.getId());
+		Game.btl.NewGame(gl.getMap());
+		int[] commanders = gl.getArrayOfCommanders();
+		boolean[] placeHolderNPC = {false,false,false,false};
+		Game.btl.AddCommanders(commanders, placeHolderNPC, 100, 50);
+		MenuHandler.CloseMenu();
+		Game.gui.InGameScreen();
 	}
 
 	/**Starts a new game when launched.*/

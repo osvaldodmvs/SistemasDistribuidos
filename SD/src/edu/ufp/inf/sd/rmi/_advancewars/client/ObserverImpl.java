@@ -1,5 +1,7 @@
 package edu.ufp.inf.sd.rmi._advancewars.client;
 
+import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
 import edu.ufp.inf.sd.rmi._advancewars.server.State;
 import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
 
@@ -12,13 +14,19 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
     private String id;
 
+    private Game g;
+
+    private GameLobby gg;
+
     private State lastObserverState;
 
     protected SubjectRI subjectRI;
 
-    public ObserverImpl(String id, SubjectRI subjectRI) throws RemoteException {
+    public ObserverImpl(String id, SubjectRI subjectRI, Game g, GameLobby gg) throws RemoteException {
         super();
         this.id = id;
+        this.gg = gg;
+        this.g = g;
         this.subjectRI = subjectRI;
         this.subjectRI.attach(this);
     }
@@ -27,9 +35,47 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
     public void update() {
         try {
             lastObserverState = subjectRI.getState();
+            //TODO : implementar a verificaçao se = "START" com um if e o estado do jogo (teclas , implementar codigo de input handler)
+            switch (lastObserverState.getInfo()) {
+                case "START":
+                    g.Start();
+                    break;
+                case "WAITING":
+                    System.out.println("I AM STILL WAITING");
+                    break;
+                /*case "UP":
+                    g.pause();
+                    break;
+                case "DOWN":
+                    g.resume();
+                    break;
+                case "LEFT":
+                    g.end();
+                    break;
+                case "RIGHT":
+                    g.restart();
+                    break;*/
+                default:
+                    break;
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(ObserverImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public GameLobby getGg() {
+        return gg;
     }
 
     public State getLastObserverState() {

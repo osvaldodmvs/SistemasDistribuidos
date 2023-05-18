@@ -1,0 +1,27 @@
+New Game -> lançar personagem -> nao pode jogar quando jogo lançar
+Join Game
+
+Tirar npcs e ter so o play no GUI do jogo , quando der start tem que 
+esperar pelos outros
+
+Mapa, estado, nº jogadores
+
+Observer apenas para alterar para todos os jogadores o estado do jogo
+
+Alterar arraylist para GameLobby
+
+ter um metodo que atualize o jogo
+
+rabbitmq nao desprezar fazer registo e login
+
+//
+
+observer vai chamar update 
+
+update vai buscar  estado , se "START" entao codigo de game.btl.newgame etc
+
+este codigo (game.btl.newgame,etc) ficar dentro do GAME (engine)
+
+referencia para o game dentro do observerImpl
+
+retirar o gamelobby da lista, apagar etc se jogo for fechado.

@@ -10,6 +10,8 @@ public class State implements Serializable {
     private String msg;
     private String id;
 
+
+    //TODO : ID DO STATE = ID DO UTILIZADOR
     /**
      * 
      * @param id

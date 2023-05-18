@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 public class SubjectImpl extends UnicastRemoteObject implements SubjectRI {
 
+
     private State subjectState;
 
     private final ArrayList<ObserverRI> observers = new ArrayList<>();
@@ -25,15 +26,21 @@ public class SubjectImpl extends UnicastRemoteObject implements SubjectRI {
     }
 
     @Override
-    public void attach(ObserverRI obsRI) {
-            observers.add(obsRI);
-            //obsRI.update();
+    public void attach(ObserverRI obsRI) throws RemoteException {
+        observers.add(obsRI);
+        //TODO : verificar se o jogo pode começar e se sim, notificar os observers
+        if(obsRI.getGg().getNumPlayers()==obsRI.getGg().getMaxPlayers()){
+            System.out.println("SETTING GAMELOBBY STATE TO START");
+            obsRI.getGg().setState("START");
+            System.out.println("SETTING SUBJECT STATE TO START");
+            obsRI.getGg().getSubject().setState(new State(obsRI.getGg().getId(),"START"));
+        }
+        obsRI.update();
     }
 
     @Override
     public void detach(ObserverRI obsRI) {
-            observers.remove(obsRI);
-
+        observers.remove(obsRI);
     }
 
     @Override
@@ -43,10 +50,13 @@ public class SubjectImpl extends UnicastRemoteObject implements SubjectRI {
 
     @Override
     public void setState(State state) {
+        System.out.println("STATE ------- MY STATE WAS " + subjectState.getInfo());
         this.subjectState = state;
+        System.out.println("STATE ------- MY STATE HAS BEEN CHANGED TO " + state.getInfo());
         notifyObservers();
     }
 
+    @Override
     public void notifyObservers(){
         for (ObserverRI o: observers) {
             try{
@@ -56,4 +66,10 @@ public class SubjectImpl extends UnicastRemoteObject implements SubjectRI {
             }
         }
     }
+
+    @Override
+    public ArrayList<ObserverRI> getObservers() throws RemoteException{
+        return observers;
+    }
+
 }

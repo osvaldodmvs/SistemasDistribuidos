@@ -16,6 +16,8 @@ import edu.ufp.inf.sd.rmi._advancewars.server.User;
  * @version 0.2
  */
 public class StartMenu implements ActionListener {
+
+	private Game game;
 	protected int UUID = 36;
 	//Single Player
 	public JButton New = new JButton("New Game");
@@ -35,6 +37,17 @@ public class StartMenu implements ActionListener {
 	DefaultListModel maps_model = new DefaultListModel();
 	
 	public StartMenu() throws RemoteException {
+		Point size = MenuHandler.PrepMenu(600,280);
+		MenuHandler.HideBackground();
+		SetBounds(size);
+		AddGui();
+		AddListeners();
+		MapList(size);
+		GameList(size);
+	}
+
+	public StartMenu(Game g) throws RemoteException {
+		this.game = g;
 		Point size = MenuHandler.PrepMenu(600,280);
 		MenuHandler.HideBackground();
 		SetBounds(size);
@@ -74,9 +87,12 @@ public class StartMenu implements ActionListener {
 	private void GameList(Point size) throws RemoteException {
 		DefaultListModel games_model = new DefaultListModel();
 		//TODO : arranjar a lista dos jogos
-		/*for (GameLobby g : Game.getGameSessionRI().getGames()) {
-			games_model.addElement(g.getMap() + " - " + g.getNumPlayers() + " - " + g.getState() + "/" + g.getId());
-		}*/
+		for (GameLobby g : Game.getGameSessionRI().getGames()) {
+			/*if(g.getState().compareTo("WAITING")==0) {
+				games_model.addElement(g.toString());
+			}*/
+			games_model.addElement(g.toString());
+		}
 		JScrollPane games_pane = new JScrollPane(games_list = new JList(games_model));
 		games_pane.setBounds(size.x+420, size.y+10, 140, 260);//420,10
 		Game.gui.add(games_pane);
@@ -97,12 +113,11 @@ public class StartMenu implements ActionListener {
 	@Override public void actionPerformed(ActionEvent e) {
 		Object s = e.getSource();
 		//TODO : informar o playerselect de que botao é que foi clicado (new game or join game)
-		if (s==New) {new PlayerSelection("New",maps_list.getSelectedValue()+"");}
+		if (s==New) {new PlayerSelection("New",maps_list.getSelectedValue()+"",game.getId(),game);}
 		else if (s==Load) {Game.save.LoadGame();MenuHandler.CloseMenu();}
 		else if (s==Join) {
 			String findingId = (games_list.getSelectedValue()+"").substring((games_list.getSelectedValue()+"").length()-UUID);
-			System.out.println("ID ----------------------------- " + findingId);
-			new PlayerSelection("Join",null,findingId);
+			new PlayerSelection("Join",null,findingId,game);
 		}
 		else if (s==Editor) {
 			Game.edit.StartEditor(
