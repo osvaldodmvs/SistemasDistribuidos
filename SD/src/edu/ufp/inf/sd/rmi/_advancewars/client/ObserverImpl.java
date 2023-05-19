@@ -43,18 +43,27 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
                 case "WAITING":
                     System.out.println("I AM STILL WAITING");
                     break;
-                /*case "UP":
-                    g.pause();
+                case "UP":
+                    Game.updateGUI("UP");
                     break;
                 case "DOWN":
-                    g.resume();
+                    Game.updateGUI("DOWN");
                     break;
                 case "LEFT":
-                    g.end();
+                    Game.updateGUI("LEFT");
                     break;
                 case "RIGHT":
-                    g.restart();
-                    break;*/
+                    Game.updateGUI("RIGHT");
+                    break;
+                case "SELECT":
+                    Game.updateGUI("SELECT");
+                    break;
+                case "CANCEL":
+                    Game.updateGUI("CANCEL");
+                    break;
+                case "START-MENU":
+                    Game.updateGUI("START-MENU");
+                    break;
                 default:
                     break;
             }

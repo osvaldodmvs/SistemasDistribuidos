@@ -16,12 +16,15 @@ public class SubjectImpl extends UnicastRemoteObject implements SubjectRI {
 
     private final ArrayList<ObserverRI> observers = new ArrayList<>();
 
+    private String token;
+
     public SubjectImpl() throws RemoteException {
         super();
     }
 
     public SubjectImpl(State subjectState) throws RemoteException {
         super();
+        this.token=null;
         this.subjectState = subjectState;
     }
 
@@ -50,10 +53,15 @@ public class SubjectImpl extends UnicastRemoteObject implements SubjectRI {
 
     @Override
     public void setState(State state) {
-        System.out.println("STATE ------- MY STATE WAS " + subjectState.getInfo());
-        this.subjectState = state;
-        System.out.println("STATE ------- MY STATE HAS BEEN CHANGED TO " + state.getInfo());
-        notifyObservers();
+        if(token==null){
+            token=state.getId();
+        }
+        if(state.getId().compareTo(token)==0){
+            System.out.println("STATE ------- MY STATE WAS " + subjectState.getInfo());
+            this.subjectState = state;
+            System.out.println("STATE ------- MY STATE HAS BEEN CHANGED TO " + state.getInfo());
+            notifyObservers();
+        }
     }
 
     @Override

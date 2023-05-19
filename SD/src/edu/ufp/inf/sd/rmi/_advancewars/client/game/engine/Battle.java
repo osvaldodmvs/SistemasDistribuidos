@@ -1,5 +1,8 @@
 package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
+import edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base;
+import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.EndBattle;
+
 import java.util.ArrayList;
 
 /**Put the game stuff in here so all I have to do is end/start this to make a game work or not.*/
@@ -101,8 +104,10 @@ public class Battle {
 	}	
 	/**This will be redone when I set up the unit buying menu.*/
 	public void Buyunit(int type, int x, int y) {
+		System.out.println("ENTERED THE BUYUNIT MENU");
 		double cost = Game.displayU.get(type).cost*Game.player.get(currentplayer).CostBonus;
 		if (Game.player.get(currentplayer).money>=cost) {
+			System.out.println("ENTERED THE BUYUNIT MENU --- IF ---");
 			Game.units.add(Game.list.CreateUnit(type, currentplayer, x, y, false));
 			Game.player.get(currentplayer).money-=cost;
 		}
@@ -115,7 +120,7 @@ public class Battle {
 		else {totalplayers = max;}
 		//HACK: Change when I add more images to support more edu.ufp.inf.sd.rmi._advancewars.client.game.players.
 		if (max>4) {totalplayers = 4;
-			Game.error.ShowError("The game currently supports only 4 edu.ufp.inf.sd.rmi._advancewars.client.game.players, not " + max + ".");
+			Game.error.ShowError("The game currently supports only 4 players, not " + max + ".");
 		}
 	}
 	public void AddCommanders(int[] coms, boolean[] npc, int start, int city) {
@@ -124,7 +129,7 @@ public class Battle {
 		for (int i = 0;i<totalplayers;i++) {//TODO: Team setup needs to be added.
 			Game.player.add(Game.list.CreateCommander(coms[i],i+1,start,npc[i]));
 		}
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base bld : Game.builds) {
+		for (Base bld : Game.builds) {
 			if (bld.owner!=15) {
 				bld.team = Game.player.get(bld.owner).team;
 			}
@@ -143,7 +148,7 @@ public class Battle {
 				playersleft--;
 				if (playersleft<=1) {
 					GameOver = true;
-					new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.EndBattle();
+					new EndBattle();
 				}
 				break;
 			}

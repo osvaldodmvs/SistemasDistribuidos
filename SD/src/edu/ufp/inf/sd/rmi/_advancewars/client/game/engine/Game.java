@@ -3,6 +3,7 @@ package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 import edu.ufp.inf.sd.rmi._advancewars.client.ObserverImpl;
 import edu.ufp.inf.sd.rmi._advancewars.client.ObserverRI;
 import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
@@ -19,7 +20,6 @@ import javax.swing.JFrame;
 
 public class Game extends JFrame implements Serializable {
 	private final String id = UUID.randomUUID().toString();
-	private ObserverRI observer;
 	private static GameSessionRI gameSessionRI;
 
 	private static final long serialVersionUID = 1L;
@@ -90,7 +90,7 @@ public class Game extends JFrame implements Serializable {
 		//load images, initialize the map, and adds the input settings.
 		load = new LoadImages();
 		map = new Map();
-		input = new InputHandler();
+		input = new InputHandler(gsRI,id);
 		list = new ListData();
 		
 		setVisible(true);//This has been moved down here so that when everything is done, it is shown.
@@ -166,6 +166,42 @@ public class Game extends JFrame implements Serializable {
 		Game.btl.AddCommanders(commanders, placeHolderNPC, 100, 50);
 		MenuHandler.CloseMenu();
 		Game.gui.InGameScreen();
+	}
+
+	public static void updateGUI(String Movement) {
+		Base ply = Game.player.get(Game.btl.currentplayer);
+		switch (Movement) {
+			case "UP":
+				ply.selecty--;
+				if (ply.selecty < 0)
+					ply.selecty++;
+				break;
+			case "DOWN":
+				ply.selecty++;
+				if (ply.selecty >= Game.map.height)
+					ply.selecty--;
+				break;
+			case "LEFT":
+				ply.selectx--;
+				if (ply.selectx<0)
+					ply.selectx++;
+				break;
+			case "RIGHT":
+				ply.selectx++;
+				if (ply.selectx>=Game.map.width)
+					ply.selectx--;
+				break;
+			case "SELECT":
+				Game.btl.Action();
+				break;
+			case "CANCEL":
+				Game.player.get(Game.btl.currentplayer).Cancle();
+				break;
+			case "START-MENU":
+				new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.Pause();
+				break;
+			default: break;
+		}
 	}
 
 	/**Starts a new game when launched.*/

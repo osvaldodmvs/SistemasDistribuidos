@@ -1,5 +1,10 @@
 package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
+import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
+import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
+import edu.ufp.inf.sd.rmi._advancewars.server.State;
+import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,6 +23,10 @@ import java.rmi.RemoteException;
 public class InputHandler implements KeyListener,MouseListener,ActionListener {
 	
 	//Development buttons and the exit game button (escape key)
+
+	private GameSessionRI gsri;
+	private String gameID;
+
 	private final int dev1 = KeyEvent.VK_NUMPAD1;
 	private final int dev2 = KeyEvent.VK_NUMPAD2;
 	private final int dev3 = KeyEvent.VK_NUMPAD3;
@@ -44,7 +53,9 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 	private final int main = MouseEvent.BUTTON1;
 	private final int alt = MouseEvent.BUTTON1;
 	
-	public InputHandler() {
+	public InputHandler(GameSessionRI gsri, String id) {
+		this.gsri=gsri;
+		this.gameID=id;
 		Game.gui.addKeyListener(this);
 		Game.gui.addMouseListener(this);
 	}
@@ -55,14 +66,19 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 		if (i==exit) {System.exit(0);}
 		if (Game.GameState==Game.State.PLAYING) {
 			edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base ply = Game.player.get(Game.btl.currentplayer);
-			
-			if (i==up) {ply.selecty--;if (ply.selecty<0) {ply.selecty++;}}
-			else if (i==down) {ply.selecty++;if (ply.selecty>=Game.map.height) {ply.selecty--;}}
-			else if (i==left) {ply.selectx--;if (ply.selectx<0) {ply.selectx++;}}
-			else if (i==right) {ply.selectx++;if (ply.selectx>=Game.map.width) {ply.selectx--;}}
-			else if (i==select) {Game.btl.Action();}
-			else if (i==cancel) {Game.player.get(Game.btl.currentplayer).Cancle();}
-			else if (i==start) {new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.Pause();}
+			try {
+				GameLobby gl = gsri.getGameIDfromLobby(gameID);
+				SubjectRI sri = gl.getSubject();
+				if (i==up) sri.setState(new State(gameID,"UP"));
+				else if (i==down) sri.setState(new State(gameID,"DOWN"));
+				else if (i==left) sri.setState(new State(gameID,"LEFT"));
+				else if (i==right) sri.setState(new State(gameID,"RIGHT"));
+				else if (i==select) sri.setState(new State(gameID,"SELECT"));
+				else if (i==cancel) sri.setState(new State(gameID,"CANCEL"));
+				else if (i==start) sri.setState(new State(gameID,"START-MENU"));
+			} catch (RemoteException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 		if (Game.GameState==Game.State.EDITOR) {
 			if (i==up) {Game.edit.selecty--;if (Game.edit.selecty<0) {Game.edit.selecty++;} Game.edit.moved = true;}
