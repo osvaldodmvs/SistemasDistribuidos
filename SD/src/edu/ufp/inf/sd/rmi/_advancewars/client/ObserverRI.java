@@ -1,5 +1,6 @@
 package edu.ufp.inf.sd.rmi._advancewars.client;
 
+import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
 
 import java.rmi.Remote;
@@ -14,4 +15,7 @@ public interface ObserverRI extends Remote {
 
     public GameLobby getGg() throws RemoteException;
 
-    }
+    public Game getG() throws RemoteException;
+
+    public void setG(Game g) throws RemoteException;;
+}

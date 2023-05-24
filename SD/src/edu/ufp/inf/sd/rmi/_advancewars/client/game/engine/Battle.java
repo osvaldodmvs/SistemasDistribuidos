@@ -2,7 +2,10 @@ package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
 import edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base;
 import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.EndBattle;
+import edu.ufp.inf.sd.rmi._advancewars.server.State;
+import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**Put the game stuff in here so all I have to do is end/start this to make a game work or not.*/
@@ -13,6 +16,9 @@ public class Battle {
 	public int currentplayer = 0;
 	public String mapname;
 	public boolean GameOver;
+
+	public String idFromGame;
+	public SubjectRI subjectRI;
 	
 	//Game settings
 	boolean FogOfWar;
@@ -51,6 +57,7 @@ public class Battle {
 	}
 
 	public void EndTurn() {
+		System.out.println("ENTERED THE END TURN MENU");
 		edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base ply = Game.player.get(currentplayer);
 		for (edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base unit : Game.units) {
 			unit.acted=false;
@@ -103,14 +110,8 @@ public class Battle {
 		}
 	}	
 	/**This will be redone when I set up the unit buying menu.*/
-	public void Buyunit(int type, int x, int y) {
-		System.out.println("ENTERED THE BUYUNIT MENU");
-		double cost = Game.displayU.get(type).cost*Game.player.get(currentplayer).CostBonus;
-		if (Game.player.get(currentplayer).money>=cost) {
-			System.out.println("ENTERED THE BUYUNIT MENU --- IF ---");
-			Game.units.add(Game.list.CreateUnit(type, currentplayer, x, y, false));
-			Game.player.get(currentplayer).money-=cost;
-		}
+	public void Buyunit(int type, int x, int y) throws RemoteException {
+		subjectRI.setState(new State(idFromGame,"BUY UNIT " + type + " " + x + " " + y + " " + currentplayer));
 	}
 
 	public void MaxUsers(int max) {
@@ -161,5 +162,12 @@ public class Battle {
 		}
 		//TODO: Change all edu.ufp.inf.sd.rmi._advancewars.client.game.buildings to be owned by the player.
 	}
-	
+
+	public int getCurrentplayer() {
+		return currentplayer;
+	}
+
+	public void setCurrentplayer(int currentplayer) {
+		this.currentplayer = currentplayer;
+	}
 }

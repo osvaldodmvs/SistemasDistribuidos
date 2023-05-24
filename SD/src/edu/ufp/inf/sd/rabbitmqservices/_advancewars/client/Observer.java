@@ -3,6 +3,7 @@ package edu.ufp.inf.sd.rabbitmqservices._advancewars.client;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.*;
 import edu.ufp.inf.sd.rabbitmqservices._04_topics.chatgui.ObserverGuiClient;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
 
 import java.io.IOException;
@@ -34,44 +35,54 @@ import java.util.logging.Logger;
 public class Observer {
 
     //Reference for gui
-    private final ObserverGuiClient gui;
+    //TODO trocar por Game(engine) e adicionar outras coisas se necessario
+    private Game game;
 
     //Preferences for exchange...
     private final Channel channelToRabbitMq;
     private final String exchangeName;
     private final BuiltinExchangeType exchangeType;
-    private final String[] exchangeBindingKeys;
+    private final String exchangeBindingKeys;
     private final String messageFormat;
+
+    private final int maxPlayers;
 
     //Settings for specifying topics
     private final String room;
     private final String user;
-    private final String general;
+    private final String newOrJoin;
 
     //Store received message to be get by gui
     private String receivedMessage;
 
-    /**
-     * @param gui
-     */
-    public Observer(ObserverGuiClient gui, String host, int port, String brokerUser, String brokerPass, String room, String user, String general, String exchangeName, BuiltinExchangeType exchangeType, String messageFormat) throws IOException, TimeoutException {
-        this.gui=gui;
-        Logger.getLogger(this.getClass().getName()).log(Level.INFO, " going to attach _05_observer to host: " + host + "...");
+    /*
+            String host=args[0];
+            int port=Integer.parseInt(args[1]);
+            String exchangeName=args[2];
+            String room=args[3];
+            String user=args[4];
+            this.generalTopic=args[5];
+    * */
+    public Observer(String host, int port, String brokerUser, String brokerPass, String user, String newOrJoin, String room, int maxPlayers, String exchangeName, BuiltinExchangeType exchangeType, String messageFormat) throws IOException, TimeoutException {
+        this.game=new Game();
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, " going to attach advancewars_observer to host: " + host + "...");
 
         Connection connection=RabbitUtils.newConnection2Server(host, port, brokerUser, brokerPass);
         this.channelToRabbitMq=RabbitUtils.createChannel2Server(connection);
         this.exchangeName=exchangeName;
         this.exchangeType=exchangeType;
 
-        this.room=room;
         this.user=user;
-        this.general=general;
+        this.newOrJoin=newOrJoin;
+        this.room=room;
+
+        this.maxPlayers=maxPlayers;
 
         // TODO: Set 2 binding keys (to receive msg from public room.general and private room.user
-        String bindingKeys[]={room+"."+general, room+"."+user};
+        String bindingKey=room;
 
 
-        this.exchangeBindingKeys=bindingKeys;
+        this.exchangeBindingKeys=bindingKey;
         this.messageFormat=messageFormat;
 
         bindExchangeToChannelRabbitMQ();
@@ -94,16 +105,13 @@ public class Observer {
     private void attachConsumerToChannelExchangeWithKey() {
         try {
             // TODO: Create a non-durable, exclusive, autodelete queue with a generated name.
-            String queueName =channelToRabbitMq.queueDeclare().getQueue();
+            String queueName = channelToRabbitMq.queueDeclare().getQueue();
 
-            // TODO: Bind to each routing key (received from args[3] upward)
-            for (String bindingKey : exchangeBindingKeys) {
-                System.err.println("main(): add queue bind to queue = " + queueName + ", with bindingKey = " + bindingKey);
+            // TODO: Bind to routing key
+            System.err.println("main(): add queue bind to queue = " + queueName + ", with bindingKey = " + exchangeBindingKeys);
 
-                // TODO: Create binding: tell exchange to send messages to a queue
-                channelToRabbitMq.queueBind(queueName, exchangeName, bindingKey);
-
-            }
+            // TODO: Create binding: tell exchange to send messages to a queue
+            channelToRabbitMq.queueBind(queueName, exchangeName, exchangeBindingKeys);
 
             /* Use a DeliverCallback lambda function instead of DefaultConsumer to receive messages from queue;
                DeliverCallback is an interface which provides a single method:
@@ -112,7 +120,7 @@ public class Observer {
                 String message=new String(delivery.getBody(), "UTF-8");
                 setReceivedMessage(message);
                 System.out.println(" [x] Received '" + message + "'");
-                gui.updateTextArea();
+                Game.updateGUI(message);
             };
             CancelCallback cancelCallback=consumerTag -> {
                 System.out.println(" [x] CancelCallback invoked");
@@ -136,7 +144,7 @@ public class Observer {
         //User maybe some <username> (private msg) or 'general' (public msg for all)
 
         // TODO: Publish message with routing key
-        channelToRabbitMq.basicPublish(exchangeName, this.room+"."+user, null, msgToSend.getBytes("UTF-8"));
+        channelToRabbitMq.basicPublish(exchangeName, room, null, msgToSend.getBytes("UTF-8"));
     }
 
     /**
@@ -152,4 +160,21 @@ public class Observer {
     public void setReceivedMessage(String receivedMessage) {
         this.receivedMessage=receivedMessage;
     }
+
+    public static void main(String[] args) {
+        try {
+            RabbitUtils.printArgs(args);
+            String host=args[0];
+            int port=Integer.parseInt(args[1]);
+            String exchangeName=args[2];
+            String user=args[3];
+            String newOrJoin=args[4];
+            String room=args[5];
+            int maxPlayers=Integer.parseInt(args[6]);
+            new Observer(host, port, "guest","guest",user, newOrJoin, room, maxPlayers, exchangeName, BuiltinExchangeType.TOPIC, "UTF-8");
+        } catch (IOException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

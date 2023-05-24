@@ -36,36 +36,15 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
         try {
             lastObserverState = subjectRI.getState();
             //TODO : implementar a verificaçao se = "START" com um if e o estado do jogo (teclas , implementar codigo de input handler)
-            switch (lastObserverState.getInfo()) {
-                case "START":
-                    g.Start();
-                    break;
-                case "WAITING":
-                    System.out.println("I AM STILL WAITING");
-                    break;
-                case "UP":
-                    Game.updateGUI("UP");
-                    break;
-                case "DOWN":
-                    Game.updateGUI("DOWN");
-                    break;
-                case "LEFT":
-                    Game.updateGUI("LEFT");
-                    break;
-                case "RIGHT":
-                    Game.updateGUI("RIGHT");
-                    break;
-                case "SELECT":
-                    Game.updateGUI("SELECT");
-                    break;
-                case "CANCEL":
-                    Game.updateGUI("CANCEL");
-                    break;
-                case "START-MENU":
-                    Game.updateGUI("START-MENU");
-                    break;
-                default:
-                    break;
+            if(lastObserverState.getInfo().compareTo("START")==0){
+                System.out.println("STARTING GAME");
+                g.Start();
+            }
+            else if (lastObserverState.getInfo().compareTo("WAITING")!=0){
+                Game.updateGUI(lastObserverState.getInfo());
+            }
+            else{
+                System.out.println("WAITING FOR PLAYERS");
             }
         } catch (RemoteException ex) {
             Logger.getLogger(ObserverImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -85,6 +64,16 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
     @Override
     public GameLobby getGg() {
         return gg;
+    }
+
+    @Override
+    public Game getG() {
+        return g;
+    }
+
+    @Override
+    public void setG(Game g) {
+        this.g = g;
     }
 
     public State getLastObserverState() {

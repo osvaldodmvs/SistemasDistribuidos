@@ -1,10 +1,9 @@
 package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.ObserverImpl;
-import edu.ufp.inf.sd.rmi._advancewars.client.ObserverRI;
+
 import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.Pause;
 import edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base;
-import edu.ufp.inf.sd.rmi._advancewars.server.GameFactoryRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
 import edu.ufp.inf.sd.rmi._advancewars.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
@@ -19,9 +18,10 @@ import java.util.UUID;
 import javax.swing.JFrame;
 
 public class Game extends JFrame implements Serializable {
-	private final String id = UUID.randomUUID().toString();
+	private static final String id = UUID.randomUUID().toString();
 	private static GameSessionRI gameSessionRI;
 
+	private static Game gg;
 	private static final long serialVersionUID = 1L;
 	
 	//Application Settings
@@ -45,7 +45,16 @@ public class Game extends JFrame implements Serializable {
 	public static Pathfinding pathing = new Pathfinding();
 	public static ListData list;
 	public static Save save = new Save();
-	public static ComputerBrain brain = new ComputerBrain();
+	public static ComputerBrain brain;
+
+	static {
+		try {
+			brain = new ComputerBrain();
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static FileFinder finder = new FileFinder();
 	public static ViewPoint view = new ViewPoint();
 	
@@ -99,7 +108,7 @@ public class Game extends JFrame implements Serializable {
 		GameLoop();
 	}
 
-	private void GameLoop() {
+	private void GameLoop() throws RemoteException {
 		boolean loop=true;
 		long last = System.nanoTime();
 		long lastCPSTime = 0;
@@ -166,11 +175,29 @@ public class Game extends JFrame implements Serializable {
 		Game.btl.AddCommanders(commanders, placeHolderNPC, 100, 50);
 		MenuHandler.CloseMenu();
 		Game.gui.InGameScreen();
+		Game.btl.subjectRI = gl.getSubject();
+		Game.btl.idFromGame = id;
+		this.setGg(this);
 	}
 
-	public static void updateGUI(String Movement) {
+	public static void updateGUI(String MovementOrAction) throws RemoteException {
 		Base ply = Game.player.get(Game.btl.currentplayer);
-		switch (Movement) {
+		SubjectRI sri = getGameSessionRI().getGameIDfromLobby(id).getSubject();
+		if(MovementOrAction.startsWith("BUY UNIT")){
+			String[] split = MovementOrAction.split(" "); //BUY UNIT TYPE X Y CURRENTPLAYER
+			int type = Integer.parseInt(split[2]);
+			int x = Integer.parseInt(split[3]);
+			int y = Integer.parseInt(split[4]);
+			int currentplayer = Integer.parseInt(split[5]);
+			double cost = Game.displayU.get(type).cost*Game.player.get(currentplayer).CostBonus;
+			if (Game.player.get(currentplayer).money>=cost) {
+				Game.units.add(Game.list.CreateUnit(type, currentplayer, x, y, false));
+				Game.player.get(currentplayer).money-=cost;
+				MenuHandler.CloseMenu();
+			}
+			return;
+		}
+		switch (MovementOrAction) {
 			case "UP":
 				ply.selecty--;
 				if (ply.selecty < 0)
@@ -198,10 +225,22 @@ public class Game extends JFrame implements Serializable {
 				Game.player.get(Game.btl.currentplayer).Cancle();
 				break;
 			case "START-MENU":
-				new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.Pause();
+				new Pause(getGg(),sri);
+				break;
+			case "END-TURN":
+				MenuHandler.CloseMenu();
+				Game.btl.EndTurn();
 				break;
 			default: break;
 		}
+	}
+
+	public static Game getGg() {
+		return gg;
+	}
+
+	public void setGg(Game gg) {
+		Game.gg = gg;
 	}
 
 	/**Starts a new game when launched.*/

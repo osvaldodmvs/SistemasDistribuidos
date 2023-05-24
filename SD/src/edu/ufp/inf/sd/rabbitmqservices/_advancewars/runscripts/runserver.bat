@@ -3,10 +3,10 @@
 @REM Author: Rui S. Moreira
 @REM Date: 10/04/2018
 @REM ************************************************************************************
-@REM Script usage: runclient <role> (where role should be: producer / consumer)
-call setenv chatgui
+@REM Script usage: runsetup <role> (where role should be: producer / consumer)
+call setenv server
 
 cd %ABSPATH2CLASSES%
-java -cp %CLASSPATH% %JAVAPACKAGEROLE%.%OBSERVER_CLASS_PREFIX% %BROKER_HOST% %BROKER_PORT% %BROKER_EXCHANGE% %1 %2 %3
+java -cp %CLASSPATH% %JAVAPACKAGEROLE%.%SERVER_CLASS_PREFIX% %BROKER_HOST% %BROKER_PORT% %QUEUE_NAME_PREFIX%
 
 cd %ABSPATH2SRC%/%JAVASCRIPTSPATH%

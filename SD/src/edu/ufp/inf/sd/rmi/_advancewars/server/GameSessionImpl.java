@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rmi._advancewars.server;
 
 import edu.ufp.inf.sd.rmi._advancewars.client.ObserverRI;
+import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -64,15 +65,14 @@ public class GameSessionImpl extends UnicastRemoteObject implements GameSessionR
 
     @Override
     public GameLobby getGameIDfromLobby(String game) throws RemoteException {
-        System.out.println("Looking for lobby which game with ID: " + game);
         for (GameLobby g : gameFactoryImpl.getDb().getGames()) {
             for (ObserverRI oi : g.getSubject().getObservers()) {
                 if (oi.getId().compareTo(game)==0) {
-                    System.out.println("Game found with ID: " + g.getId());
                     return g;
                 }
             }
         }
         return null;
     }
+
 }

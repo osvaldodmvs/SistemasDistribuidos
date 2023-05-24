@@ -5,7 +5,7 @@ public class Infantry extends Base {
 		super(owner, xx, yy, active);
 		name = "Infantry";
 		nick = "Inf";
-		desc = "Weakest edu.ufp.inf.sd.rmi._advancewars.client.game.units here.";
+		desc = "Weakest units here.";
 		img = 0;
 		speed = 4;
 		raider = true;

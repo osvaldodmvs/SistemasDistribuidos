@@ -1,22 +1,28 @@
 package edu.ufp.inf.sd.rmi._advancewars.client.game.engine;
 
 import java.awt.Point;
+import java.rmi.RemoteException;
 import java.util.Random;
 import edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base;
+import edu.ufp.inf.sd.rmi._advancewars.server.SubjectImpl;
+import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
 
 public class ComputerBrain {
 	
 	private Point building;
 	public boolean finished;
-	
+
 	public boolean DoneUnits;
 	public int UnitCount;
 	
 	public boolean DoneCities;
 	public int CityCount;
-	
+
+	public ComputerBrain() throws RemoteException {
+	}
+
 	/**This method is hit every game loop for npcs and handles a single unit / city so it is less heavy on the game.*/
-	public void ThinkDamnYou(edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base ply) {
+	public void ThinkDamnYou(edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base ply) throws RemoteException {
 		//TODO: Redesign it to allow the npc to grab if someone is in firing range faster and easier.
 		if (finished) {
 			finished = false;
@@ -73,7 +79,7 @@ public class ComputerBrain {
 		DoneCities = true;
 	}
 
-	private void HandleBuilding(edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base bld) {
+	private void HandleBuilding(edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base bld) throws RemoteException {
 		if (!bld.Menu.equals("")) {
 			if (!bld.Locked) {
 				Random rand = new Random();
