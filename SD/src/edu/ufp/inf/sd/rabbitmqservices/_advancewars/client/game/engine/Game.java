@@ -158,13 +158,8 @@ public class Game extends JFrame implements Serializable {
 		return id;
 	}
 
-	public static GameSessionRI getGameSessionRI() {
-		return gameSessionRI;
-	}
 
-	public void Start() throws RemoteException {
-		GameLobby gl = gameSessionRI.getGameIDfromLobby(id);
-		System.out.println("MY ID IS " + id + " AND I FOUND LOBBY GL WITH ID: "+gl.getId());
+	public static void Start(String message) {
 		Game.btl.NewGame(gl.getMap());
 		int[] commanders = gl.getArrayOfCommanders();
 		boolean[] placeHolderNPC = {false,false,false,false};
@@ -176,7 +171,7 @@ public class Game extends JFrame implements Serializable {
 		this.setGg(this);
 	}
 
-	public static void updateGUI(String MovementOrAction) throws RemoteException {
+	public static void updateGUI(String MovementOrAction) {
 		Base ply = Game.player.get(Game.btl.currentplayer);
 		SubjectRI sri = getGameSessionRI().getGameIDfromLobby(id).getSubject();
 		if(MovementOrAction.startsWith("BUY UNIT")){

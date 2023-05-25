@@ -5,10 +5,10 @@
  */
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.server;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
-import edu.ufp.inf.sd.rabbitmqservices._02_workqueues.consumer.SMTPConfigs;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
 
 import static edu.ufp.inf.sd.rabbitmqservices._02_workqueues.consumer.SendMail.sendMail;
@@ -88,9 +88,9 @@ import static edu.ufp.inf.sd.rabbitmqservices._02_workqueues.consumer.SendMail.s
  * @author rui
  */
 
-
-
 public class Server {
+
+    private static DBMockup db=new DBMockup();
 
     public static void main(String[] argv) throws Exception {
         try {
@@ -100,6 +100,7 @@ public class Server {
             String host = argv[0];
             int port = Integer.parseInt(argv[1]);
             String queueName = argv[2];
+            String exchangeName = argv[3];
 
             /* Open a connection and a channel, and declare the queue from which to consume.
             Declare the queue here, as well, because we might start the client before the publisher. */
@@ -111,6 +112,7 @@ public class Server {
             parameters, need to create a new one */
             boolean durable = true;
             //channel.queueDeclare(Send.QUEUE_NAME, false, false, false, null);
+            //TODO : FILA PARA ONDES CLIENTES ENVIAM MENSAGENS
             channel.queueDeclare(queueName, durable, false, false, null);
             System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
@@ -120,6 +122,7 @@ public class Server {
             int prefetchCount = 1;
             channel.basicQos(prefetchCount);
 
+            channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
             //Create consumer which will doWork()
             /*
             final Consumer consumer = new DefaultConsumer(channel) {
@@ -152,10 +155,23 @@ public class Server {
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
                 System.out.println(" [x] Received '" + message + "'");
+                //TODO doWork é o metodo que envia (publish) mensagem para o exchange
                 try {
-                    doWork(message);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    if(message.contains(";")){
+                        String[] split = message.split(";"); //0user 1newOrJoin 2room 3map 4commander
+                        if(split[1].compareTo("new")==0){
+                            GameLobby g = new GameLobby(split[3],split[2],split[0],Integer.parseInt(split[4]));
+                            db.addGame(g);
+                            message="Game created, waiting for players!";
+                            channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                        }
+                        else{
+                            GameLobby g = db.getGame(split[2]);
+                            g.getPlayers().add(split[0]);
+
+                        }
+                    }
+                    channel.basicPublish(exchangeName,"routingkey",null,message.getBytes("UTF-8"));
                 } finally {
                     System.out.println(" [x] Done processing task");
                     //Worker must Manually ack each finalised task, hence, even if worker is killed
@@ -180,25 +196,4 @@ public class Server {
 
     }
 
-    /**
-     * Send the string to a log file
-     */
-
-    /*
-    private static void doWork(String task) throws InterruptedException {
-        try(FileWriter fw = new FileWriter("logfile.txt",true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw);
-        )
-        {
-            out.println(task);
-            System.out.println("Printed " + task + " to file");
-        } catch (IOException e){
-            System.out.println("Error writing to logfile");
-        }
-    }*/
-    private static void doWork(String task) throws InterruptedException {
-        //TODO : enviar para todos os jogadores da jogada ou açao
-        sendMail(SMTPConfigs.MAIL_TO_ADDR,SMTPConfigs.MAIL_FROM_ADDR,SMTPConfigs.SMTP_HOST_ADDR,SMTPConfigs.SMTP_HOST_PORT, "true", SMTPConfigs.SMTP_USER, SMTPConfigs.SMTP_PASS, "Subject test", task);
-    }
 }

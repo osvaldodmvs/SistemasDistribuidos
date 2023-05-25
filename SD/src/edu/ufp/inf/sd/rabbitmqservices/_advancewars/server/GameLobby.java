@@ -13,23 +13,21 @@ public class GameLobby implements Serializable {
 	private ArrayList<Integer> commanders = new ArrayList<>();
 	private String map;
 	//mapa
-	private String state;
-	//estado, a decorrer, espera ,etc
+	private ArrayList<String> players = new ArrayList<>();
 
 	//construtor
 
 	public GameLobby() {
 		this.setNumPlayers(0);
-		this.setState("WAITING");
 	}
 
-	public GameLobby(String map, String ID) throws RemoteException {
+	public GameLobby(String map, String ID, String user, int commander) throws RemoteException {
 		this.setId(ID);
 		this.setMap(map);
 		this.setMaxPlayers(playersbymap(map));
-		System.out.println("Max players: <"+this.getMaxPlayers()+">");
 		this.setNumPlayers(1);
-		this.setState("WAITING");
+		this.players.add(user);
+		this.commanders.add(commander);
 	}
 
 	public String getId() {
@@ -65,12 +63,12 @@ public class GameLobby implements Serializable {
 		this.map = map;
 	}
 
-	public String getState() {
-		return state;
+	public ArrayList<String> getPlayers() {
+		return players;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setPlayers(ArrayList<String> players) {
+		this.players = players;
 	}
 
 	public ArrayList<Integer> getCommanders() {
@@ -79,6 +77,12 @@ public class GameLobby implements Serializable {
 
 	public void setCommanders(ArrayList<Integer> commanders) {
 		this.commanders = commanders;
+	}
+
+	public void addToGameLobby(GameLobby g, String user, int commander){
+		g.getPlayers().add(user);
+		g.numPlayers++;
+
 	}
 
 	public int playersbymap(String map){
@@ -94,10 +98,5 @@ public class GameLobby implements Serializable {
 			array[i] = commanders.get(i);
 		}
 		return array;
-	}
-
-	@Override
-	public String toString() {
-		return map + " / players : " + numPlayers + "/" + maxPlayers + " / State : " + state + " / ID : " + id;
 	}
 }

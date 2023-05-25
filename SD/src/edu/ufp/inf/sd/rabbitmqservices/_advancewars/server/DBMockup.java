@@ -1,7 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.server;
 
-import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
-import edu.ufp.inf.sd.rmi._advancewars.server.User;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.server.GameLobby;
 
 import java.util.ArrayList;
 
@@ -21,8 +20,6 @@ public class DBMockup {
     public DBMockup() {
         games = new ArrayList<>();
     }
-
-
 
     public ArrayList<GameLobby> getGames() {
         return games;
