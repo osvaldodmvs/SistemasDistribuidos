@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base;
 
 public class Helecopter extends Base {
 	public Helecopter(int owner, int xx, int yy, boolean active) {

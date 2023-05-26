@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 public class Base {
 	//Basic Info
@@ -29,7 +29,7 @@ public class Base {
 	//Unit selection and unit end game statistics (total kills / loses)
 	public boolean unitselected;//If the character has selected a unit or not. (using this instead of selectedunit=-1)
 	public int selectedunit = 0;//Which unit is currently selected to use.
-	public int usedunits;//How many edu.ufp.inf.sd.rmi._advancewars.client.game.units does the player have left until turn ends. Currently unused.
+	public int usedunits;//How many edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units does the player have left until turn ends. Currently unused.
 	public int kills;
 	public int loses;
 	
@@ -76,7 +76,7 @@ public class Base {
 		}
 	}
 	
-	/**The first special ability the player can use when the edu.ufp.inf.sd.rmi._advancewars.client.game.players power>level1. leave level1 at 0 to remove access to this ability.*/
+	/**The first special ability the player can use when the edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players power>level1. leave level1 at 0 to remove access to this ability.*/
 	public void MyPower1() {}
 	/**The second ability, I might have these point to something like Game.powers.QuickFix();*/
 	public void MyPower2() {}
@@ -100,7 +100,7 @@ public class Base {
 		return false;
 	}
 	public boolean FindCity() {//Finds a city to use for menu pickings.
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base bld : Game.builds) {
+		for (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base bld : Game.builds) {
 			if (bld.x==selectx&&bld.y==selecty&&bld.owner==Game.btl.currentplayer) {
 				bld.OpenMenu();
 				return true;

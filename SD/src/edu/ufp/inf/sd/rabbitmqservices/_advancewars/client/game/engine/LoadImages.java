@@ -1,7 +1,7 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.ZipHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.ZipHandler;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -36,31 +36,31 @@ public class LoadImages {
 	/**This will initialize the different sprite sheets/atlas*/
 	public LoadImages() {
 		Toolkit tool = Toolkit.getDefaultToolkit();
-		edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_char = tool.getImage(getClass().getResource("../img/"+"Units"+".png"));
-		edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_tile = tool.getImage(getClass().getResource("../img/"+"Terrain"+".png"));
-		edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_city = tool.getImage(getClass().getResource("../img/"+"Cities"+".png"));
-		edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_exts = tool.getImage(getClass().getResource("../img/"+"Extras"+".png"));
-		edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_plys = tool.getImage(getClass().getResource("../img/"+"Players"+".png"));
-		edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_menu[0] = tool.getImage(getClass().getResource("../img/"+"GameInfo"+".png"));
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_char = tool.getImage(getClass().getResource("../img/"+"Units"+".png"));
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_tile = tool.getImage(getClass().getResource("../img/"+"Terrain"+".png"));
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_city = tool.getImage(getClass().getResource("../img/"+"Cities"+".png"));
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_exts = tool.getImage(getClass().getResource("../img/"+"Extras"+".png"));
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_plys = tool.getImage(getClass().getResource("../img/"+"Players"+".png"));
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_menu[0] = tool.getImage(getClass().getResource("../img/"+"GameInfo"+".png"));
 	}
 	/**Opens a custom texture pack then goes through it comparing sprite sheets to see if they are usable.*/
 	public void LoadTexturePack(String name) {
 		ZipHandler zip = new ZipHandler(name);
 		
-	    edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_char = TryNewImage("Units", zip, size_Unit);
-	    Times_Unit = ResizeImage(size_Unit[0], edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_char.getWidth(null));
+	    edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_char = TryNewImage("Units", zip, size_Unit);
+	    Times_Unit = ResizeImage(size_Unit[0], edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_char.getWidth(null));
 	    
-	    edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_tile = TryNewImage("Terrain", zip, size_Terrain);
-	    Times_Terrain = ResizeImage(size_Terrain[0], edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_tile.getWidth(null));
+	    edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_tile = TryNewImage("Terrain", zip, size_Terrain);
+	    Times_Terrain = ResizeImage(size_Terrain[0], edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_tile.getWidth(null));
 	    
-	    edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_city = TryNewImage("Cities", zip, size_City);
-	    Times_City = ResizeImage(size_City[0], edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_city.getWidth(null));
+	    edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_city = TryNewImage("Cities", zip, size_City);
+	    Times_City = ResizeImage(size_City[0], edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_city.getWidth(null));
 	    
-	    edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_plys = TryNewImage("Players", zip, size_Player);
-	    Times_Player = ResizeImage(size_Player[0], edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_plys.getWidth(null));
+	    edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_plys = TryNewImage("Players", zip, size_Player);
+	    Times_Player = ResizeImage(size_Player[0], edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_plys.getWidth(null));
 	    
-	    edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_exts = TryNewImage("Extras", zip, size_City);
-	    Times_Extras = ResizeImage(size_Extras[0], edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.img_exts.getWidth(null));
+	    edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_exts = TryNewImage("Extras", zip, size_City);
+	    Times_Extras = ResizeImage(size_Extras[0], edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.img_exts.getWidth(null));
 	}
 	/**Currently supports 2x2 to 1024x1024 images.*/
 	private int ResizeImage(int original, int modified) {

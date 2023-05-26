@@ -63,23 +63,23 @@ public class Gui extends JPanel {
 			gg.fillRect(0, 0, width, height);
 			gg.drawImage(Game.img_menu[0], 0, 0, width, height, 0, 0, 32, 256, null);
 			//long start = System.currentTimeMillis();
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Terrain.Draw(gg, Game.ScreenBase);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Ranges.Draw(gg, Game.ScreenBase);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Cities.Draw(gg, Game.ScreenBase);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Units.Draw(gg, Game.ScreenBase);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Selector.Draw(frame, gg, Game.ScreenBase,
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Terrain.Draw(gg, Game.ScreenBase);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Ranges.Draw(gg, Game.ScreenBase);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Cities.Draw(gg, Game.ScreenBase);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Units.Draw(gg, Game.ScreenBase);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Selector.Draw(frame, gg, Game.ScreenBase,
 					Game.player.get(Game.btl.currentplayer).selectx,
 					Game.player.get(Game.btl.currentplayer).selecty);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.SmallMenu.Draw(gg,frame);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.SmallMenu.Draw(gg,frame);
 		break;
 		case EDITOR:
 			gg.setColor(new Color(0,0,60));
 			gg.fillRect(0, 0, width, height);
 			gg.setColor(new Color(255,255,255));
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Terrain.Draw(gg, Game.ScreenBase);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Cities.Draw(gg, Game.ScreenBase);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Units.Draw(gg, Game.ScreenBase);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.gui.Selector.Draw(frame, gg, Game.ScreenBase,
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Terrain.Draw(gg, Game.ScreenBase);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Cities.Draw(gg, Game.ScreenBase);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Units.Draw(gg, Game.ScreenBase);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.Selector.Draw(frame, gg, Game.ScreenBase,
 					Game.edit.selectx,
 					Game.edit.selecty);
 		break;

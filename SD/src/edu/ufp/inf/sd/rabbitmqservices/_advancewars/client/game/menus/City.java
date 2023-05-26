@@ -13,11 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
 
 /**
- * Displays a list of available edu.ufp.inf.sd.rmi._advancewars.client.game.units, and some information about them to buy.
+ * Displays a list of available edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units, and some information about them to buy.
  * @author SergeDavid
  * @version 0.2
  */
@@ -114,7 +114,7 @@ public class City implements ActionListener,ListSelectionListener {
 	}
 	private void ChangeAlt() {
 		Alt.removeAll();
-		edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base unit = Game.displayU.get(current);
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base unit = Game.displayU.get(current);
 		UnitName.setText(unit.name);
 		UnitDesc.setText(
 				"Fuel: " + unit.MaxFuel + "\n" +

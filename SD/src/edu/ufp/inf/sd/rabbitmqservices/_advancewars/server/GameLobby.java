@@ -3,6 +3,8 @@ package edu.ufp.inf.sd.rabbitmqservices._advancewars.server;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameLobby implements Serializable {
 
@@ -79,10 +81,14 @@ public class GameLobby implements Serializable {
 		this.commanders = commanders;
 	}
 
-	public void addToGameLobby(GameLobby g, String user, int commander){
-		g.getPlayers().add(user);
-		g.numPlayers++;
-
+	public int addToGameLobby(String user, int commander){
+		if(numPlayers+1>getMaxPlayers()){
+			return -1;
+		}
+		this.getPlayers().add(user);
+		this.numPlayers++;
+		this.commanders.add(commander);
+		return 0;
 	}
 
 	public int playersbymap(String map){
@@ -90,6 +96,14 @@ public class GameLobby implements Serializable {
 			return 4;
 		}
 		return 2;
+	}
+
+	public String returnCommanders(){
+		StringBuilder build = new StringBuilder();
+		for (int commander : commanders) {
+			build.append(commander).append("");
+		}
+		return build.toString().trim();
 	}
 
 	public int[] getArrayOfCommanders(){

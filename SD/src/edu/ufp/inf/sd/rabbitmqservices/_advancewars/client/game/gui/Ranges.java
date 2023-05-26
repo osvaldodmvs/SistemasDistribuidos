@@ -4,14 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Pathfinding;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Pathfinding;
 
 /**
- * Depending on if a unit is selected by the current player and the edu.ufp.inf.sd.rmi._advancewars.client.game.units state, it will draw the movement range (based on path finding outcome).
+ * Depending on if a unit is selected by the current player and the edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units state, it will draw the movement range (based on path finding outcome).
  * with the inclusion of two development settings to display times a tile has been hit in path finding, or just the tiles cost.
- * It will also draw the attackable locations depending on the edu.ufp.inf.sd.rmi._advancewars.client.game.units max and min attack ranges.
+ * It will also draw the attackable locations depending on the edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units max and min attack ranges.
  * @author SergeDavid
  * @version 0.3
  */

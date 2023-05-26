@@ -1,10 +1,10 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui;
 
 import java.awt.Graphics2D;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 /**
- * This draws the quick info for edu.ufp.inf.sd.rmi._advancewars.client.game.units and edu.ufp.inf.sd.rmi._advancewars.client.game.buildings. (Health, Capturing, Low Ammo/Fuel)
+ * This draws the quick info for edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units and edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings. (Health, Capturing, Low Ammo/Fuel)
  * @param g = The Graphics2D to drawn too.
  * @param resize = Size setup of the window to use.
  * @author SergeDavid

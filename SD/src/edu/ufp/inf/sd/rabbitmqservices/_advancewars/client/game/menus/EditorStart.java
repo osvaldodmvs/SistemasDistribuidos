@@ -8,8 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
 
 /**
  * This handles the basic settings for the map editor (name, width, and height) I shouldn't need this when I add dynamic map size updating.

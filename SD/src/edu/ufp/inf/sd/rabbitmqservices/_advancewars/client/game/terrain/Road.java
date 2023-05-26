@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base;
 
 public class Road extends Base {
 	public Road() {

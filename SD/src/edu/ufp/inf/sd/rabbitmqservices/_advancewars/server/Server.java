@@ -167,8 +167,22 @@ public class Server {
                         }
                         else{
                             GameLobby g = db.getGame(split[2]);
-                            g.getPlayers().add(split[0]);
-
+                            int valid=g.addToGameLobby(split[0],Integer.parseInt(split[4]));
+                            if(valid==-1){
+                                message="Game lobby is full!";
+                                channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                            }
+                            else if(g.getPlayers().size()==g.getMaxPlayers()){
+                                message="Game is full, starting game!";
+                                channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                                message="Start "+g.getMap()+" "+g.returnCommanders();
+                                channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                                //TODO start game
+                            }
+                            else{
+                                message="Player joined, waiting for more players!";
+                                channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                            }
                         }
                     }
                     channel.basicPublish(exchangeName,"routingkey",null,message.getBytes("UTF-8"));

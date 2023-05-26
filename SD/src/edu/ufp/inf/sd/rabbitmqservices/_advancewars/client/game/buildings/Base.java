@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 public class Base {
 	//Image and other info
@@ -27,7 +27,7 @@ public class Base {
 	public int y;
 	
 	public Base(int owner,int xx, int yy) {
-		//15 = Neutral, 12~14 are unused. (12 max edu.ufp.inf.sd.rmi._advancewars.client.game.players)
+		//15 = Neutral, 12~14 are unused. (12 max edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players)
 		System.out.println("Base level owner: " + owner);
 		this.owner=owner;
 		x=xx;
@@ -38,7 +38,7 @@ public class Base {
 
 	public void OpenMenu() {
 		if (Menu!=null) {
-			new edu.ufp.inf.sd.rmi._advancewars.client.game.menus.City(Menu, x, y);
+			new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.City(Menu, x, y);
 		}
 	}
 	

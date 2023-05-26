@@ -8,9 +8,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.Options;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.Options;
 
 /** 
  * This contains a list of texture packs and two buttons, return and load. Eventually to support reload default pack.
@@ -24,7 +24,7 @@ public class TexturePack implements ActionListener {
 	JButton Load = new JButton("Load");
 	
 	public TexturePack() {//TODO: Add a return to default button.
-		Point size = edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler.PrepMenu(300,320);
+		Point size = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler.PrepMenu(300,320);
 		SetBounds(size);
 		AddGui();
 		AddListeners();

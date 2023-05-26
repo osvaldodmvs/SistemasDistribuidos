@@ -1,7 +1,7 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui;
 
 import java.awt.Graphics2D;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 /**
  * Draws all of the currently visible tiles on the screen.

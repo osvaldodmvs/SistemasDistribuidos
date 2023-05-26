@@ -7,8 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
 
 public class EditorStuff implements ActionListener {
 
@@ -97,21 +97,21 @@ public class EditorStuff implements ActionListener {
 		}
 		for (int i = 0; i < Game.displayU.size(); i++) {
 			if (s==Units[i]) {
-				Game.edit.pick = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Editor.Type.UNIT;
+				Game.edit.pick = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Editor.Type.UNIT;
 				Game.edit.id = i;
 				MenuHandler.CloseMenu();
 			}
 		}
 		for (int i = 0; i < Game.displayB.size(); i++) {
 			if (s==Cities[i]) {
-				Game.edit.pick = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Editor.Type.CITY;
+				Game.edit.pick = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Editor.Type.CITY;
 				Game.edit.id = i;
 				MenuHandler.CloseMenu();
 			}
 		}
 		for (int i = 0; i < Game.map.tiles.size(); i++) {
 			if (s==Tiles[i]) {
-				Game.edit.pick = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Editor.Type.TILE;
+				Game.edit.pick = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Editor.Type.TILE;
 				Game.edit.id = i;
 				MenuHandler.CloseMenu();
 			}

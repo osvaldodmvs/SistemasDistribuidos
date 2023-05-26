@@ -1,12 +1,12 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 import java.awt.Point;
 
 /**
  * This controls what you can see in game (on the map) and moving around along it.
- * Place MoveView(); in the game-loop (100ms) to automate it (Teleporting across the map between switching viewed edu.ufp.inf.sd.rmi._advancewars.client.game.units / turns is automatic)
+ * Place MoveView(); in the game-loop (100ms) to automate it (Teleporting across the map between switching viewed edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units / turns is automatic)
  * Use Viewable(x,y); to check if something can be seen on screen and ViewX(); / ViewY(); to grab the offsets (in case it changes from a direct copy + paste).
  * @author SergeDavid
  * @version 0.2
@@ -26,12 +26,12 @@ public class ViewPoint {
 	public void MoveView() {
 		int y = 0;
 		int x = 0;
-		if (edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.GameState == edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.State.PLAYING) {
-			y = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.player.get(edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.btl.currentplayer).selecty;
-			x = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.player.get(edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.btl.currentplayer).selectx;
+		if (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.GameState == edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.State.PLAYING) {
+			y = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.player.get(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.btl.currentplayer).selecty;
+			x = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.player.get(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.btl.currentplayer).selectx;
 		}
 		else {
-			y = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.edit.selecty;
+			y = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.edit.selecty;
 			x = Game.edit.selectx;
 		}
 		MoveNorth(y);

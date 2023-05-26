@@ -3,7 +3,7 @@ package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 /**
  * This shares the common methods shared between all of the menu classes.

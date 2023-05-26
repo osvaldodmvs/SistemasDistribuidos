@@ -46,7 +46,7 @@ public class StartMenu implements ActionListener {
 		AddGui();
 		AddListeners();
 		MapList(size);
-eu	}
+}
 
 	public StartMenu(Game g) throws RemoteException {
 		this.game = g;

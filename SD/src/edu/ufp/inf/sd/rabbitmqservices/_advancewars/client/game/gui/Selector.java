@@ -1,7 +1,7 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui;
 
 import java.awt.Graphics2D;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 /**
  * This draws 4 different images (each corner) of the selector and moves them in/out in connection with the current frame (at 1/2 speed) [Based off 12 max]

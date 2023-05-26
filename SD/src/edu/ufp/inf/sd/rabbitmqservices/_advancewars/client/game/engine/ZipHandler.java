@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,7 +22,7 @@ public class ZipHandler {
 			zipFile = new ZipFile(System.getProperty("user.dir") + File.separator + folder + File.separator + path + ".zip");
 		}
 		catch (IOException e) {
-			edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.error.ShowError("Could not find " + path + ".zip in the mods folder.");
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.error.ShowError("Could not find " + path + ".zip in the mods folder.");
 		}
 	}
 	

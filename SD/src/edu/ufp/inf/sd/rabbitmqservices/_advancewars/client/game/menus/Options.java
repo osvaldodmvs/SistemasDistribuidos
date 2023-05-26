@@ -12,10 +12,10 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.StartMenu;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.TexturePack;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.StartMenu;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.TexturePack;
 
 /**
  * The options menu is used for modifying the music / sound volume, window size, and other settings (debug and what not included).

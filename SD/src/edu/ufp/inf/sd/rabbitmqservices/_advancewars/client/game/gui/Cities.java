@@ -1,7 +1,7 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui;
 
 import java.awt.Graphics2D;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 /**
  * This draws all of the cities currently in the game that are visible.
@@ -16,7 +16,7 @@ public class Cities {
 		int xoff = Game.view.ViewX();
 		int yoff = Game.view.ViewY();
 		
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base bld : Game.builds) {
+		for (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base bld : Game.builds) {
 			if (Game.view.Viewable(bld.x,bld.y)) {
 				int[] loc = bld.DrawMe();
 				g.drawImage(Game.img_city,

@@ -8,11 +8,9 @@ import java.rmi.RemoteException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.ObserverImpl;
-import edu.ufp.inf.sd.rmi._advancewars.client.ObserverRI;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
-import edu.ufp.inf.sd.rmi._advancewars.server.GameLobby;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.server.GameLobby;
 
 /**
  * This deals with player and battle options setup (might split it) such as npc, team, commander, starting money, turn money, fog, etc.
@@ -46,7 +44,7 @@ public class PlayerSelection implements ActionListener {
 		this.g = game;
 		this.pressed = pressed;
 		this.mapname = map;
-		Point size = edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler.PrepMenu(275,200);
+		Point size = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler.PrepMenu(275,200);
 		Prev.addActionListener(this);
 		Prev.setBounds(size.x+10+84, size.y+10, 64, 32);
 		Game.gui.add(Prev);
@@ -69,7 +67,7 @@ public class PlayerSelection implements ActionListener {
 		this.g = gameIam;
 		this.gameIDtoJoin = gameIDtoJoin;
 		System.out.println("Mapa : <"+mapname+">");
-		Point size = edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler.PrepMenu(275,200);
+		Point size = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler.PrepMenu(275,200);
 		Prev.addActionListener(this);
 		Prev.setBounds(size.x+10+84, size.y+10, 64, 32);
 		Game.gui.add(Prev);
@@ -103,7 +101,7 @@ public class PlayerSelection implements ActionListener {
 	@Override public void actionPerformed(ActionEvent e) {
 		Object s = e.getSource();
 		if (s == Return) {
-			edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler.CloseMenu();
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler.CloseMenu();
 			try {
 				Game.gui.LoginScreen();
 			} catch (RemoteException ex) {
@@ -112,33 +110,7 @@ public class PlayerSelection implements ActionListener {
 		}
 		//quando cliente clica no start
 		else if(s == ThunderbirdsAreGo) {
-			//set state no observer ou charmar funçao
-			//TODO : que botao foi clicado, new ou join para saber se chama addGame ou joinGame
-			if(pressed.compareTo("New")==0){
-				try {
-					GameLobby gg = Game.getGameSessionRI().addGame(mapname,gameIDtoJoin,plyer);
-					new ObserverImpl(g.getId(),gg.getSubject(),g,gg);
-					//TODO : obrigar o utilizador a esperar
-					edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler.CloseMenu();
-					return;
-				} catch (RemoteException ex) {
-					throw new RuntimeException(ex);
-				}
-			}
-			//TODO : criar array de comandantes no gamelobby e adicionar a esse array todos os comandantes selecionados (com new e join)
-			else if(pressed.compareTo("Join")==0){
-				try {
-					GameLobby gg = Game.getGameSessionRI().joinGame(gameIDtoJoin,plyer);
-					if(gg!=null){
-						new ObserverImpl(g.getId(),gg.getSubject(),g,gg);
-					}
-					//TODO : verificar se o jogo reune as condiçoes para começar e se sim, começar
-					MenuHandler.CloseMenu();
-					return;
-				} catch (RemoteException ex) {
-					throw new RuntimeException(ex);
-				}
-			}
+			//
 		}
 		if (s == Prev) {
 			plyer--;

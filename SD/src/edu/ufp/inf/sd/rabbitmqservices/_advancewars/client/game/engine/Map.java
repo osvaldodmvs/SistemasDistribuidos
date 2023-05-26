@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.MapParser;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.MapParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +15,13 @@ public class Map {
 	public String desc;
 	
 	/**A square/rectangular area that you play on. Diamond shaped if isometric.*/
-	public edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base[][] map;
-	public List<edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base> tiles = new ArrayList<edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base>();
+	public edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base[][] map;
+	public List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base> tiles = new ArrayList<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base>();
 	public MapParser parse = new MapParser();
 	
 	public Map() {
 		LoadTiles();
-		map = new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base[height][width];
+		map = new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base[height][width];
 	}
 	
 	public void MapSetup(int width, int height) {
@@ -30,11 +30,11 @@ public class Map {
 		if (height<minsize) {height=minsize;}if (height>maxsize) {height=maxsize;}
 		this.width=width;
 		this.height=height;
-		map = new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base[height][width];
+		map = new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base[height][width];
 		//TODO: Current way of keeping the map clean, I should find a way of doing this with a smaller startup cost.
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				map[y][x] = new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Dirt();
+				map[y][x] = new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Dirt();
 			}
 		}
 	}
@@ -49,7 +49,7 @@ public class Map {
 			}
 		}
 	}
-	private void ChangeTiles(edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base type, int x, int y){
+	private void ChangeTiles(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base type, int x, int y){
 		boolean T1 = FindCommon(type.name,x-1,y-1);
 		boolean T2 = FindCommon(type.name,x,y-1);
 		boolean T3 = FindCommon(type.name,x+1,y-1);
@@ -110,14 +110,14 @@ public class Map {
 		}
 	}
 
-	public edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base getTile(int i) {
+	public edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base getTile(int i) {
 		switch(i) {
-		case 0:return new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Dirt();
-		case 1:return new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Forest();
-		case 2:return new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Mountain();
-		case 3:return new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Water();
-		case 4:return new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.City();
-		case 5:return new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Road();
+		case 0:return new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Dirt();
+		case 1:return new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Forest();
+		case 2:return new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Mountain();
+		case 3:return new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Water();
+		case 4:return new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.City();
+		case 5:return new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Road();
 		default:return null;
 		}
 	}
@@ -126,14 +126,14 @@ public class Map {
 		System.out.println("Okay it worked?");
 		width = neww;
 		height = newh;
-		edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base[][] newmap = new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Base[height][width];
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base[][] newmap = new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Base[height][width];
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {//TODO: Fix this as it seems to not be exactly correct.
 				if (oldh < y || oldw < x) {
 					newmap[y][x] = map[y][x];
 				}
 				else {
-					newmap[y][x] = new edu.ufp.inf.sd.rmi._advancewars.client.game.terrain.Dirt();
+					newmap[y][x] = new edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.terrain.Dirt();
 				}
 			}
 		}

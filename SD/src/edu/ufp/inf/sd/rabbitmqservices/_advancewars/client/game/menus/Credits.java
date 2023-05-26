@@ -7,8 +7,8 @@ import java.rmi.RemoteException;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
 
 public class Credits implements ActionListener {
 	

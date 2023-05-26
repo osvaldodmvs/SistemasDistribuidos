@@ -1,8 +1,8 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings;
 
-//import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+//import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base;
 
 public class Shipyard extends Base {
 

@@ -7,8 +7,8 @@ import java.rmi.RemoteException;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
 
 /**
  * The end game menu that pops up, it pretty much only contains player data such as kills, captures, money, and win / lose
@@ -49,7 +49,7 @@ public class EndBattle implements ActionListener {
 
 	private void PopulateStats() {
 		String[] text = {"Players\n","Money\n","Kills\n","Loses\n"};
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base ply : Game.player) {
+		for (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base ply : Game.player) {
 			text[0]+="\n" + ply.name;
 			text[1]+="\n" + ply.money;
 			text[2]+="\n" + ply.kills;

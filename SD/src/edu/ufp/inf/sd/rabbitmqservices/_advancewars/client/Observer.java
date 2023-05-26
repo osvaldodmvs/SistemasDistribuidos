@@ -2,14 +2,12 @@ package edu.ufp.inf.sd.rabbitmqservices._advancewars.client;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.*;
-import edu.ufp.inf.sd.rabbitmqservices._04_topics.chatgui.ObserverGuiClient;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rabbitmqservices._advancewars.server.GameLobby;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
 
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -116,6 +114,7 @@ public class Observer {
 
             // TODO: Create binding: tell exchange to send messages to a queue
             channelToRabbitMq.queueBind(queueName, exchangeName, exchangeBindingKeys);
+            AtomicBoolean flag_gamefull= new AtomicBoolean(false);
 
             /* Use a DeliverCallback lambda function instead of DefaultConsumer to receive messages from queue;
                DeliverCallback is an interface which provides a single method:
@@ -124,7 +123,13 @@ public class Observer {
                 String message=new String(delivery.getBody(), "UTF-8");
                 setReceivedMessage(message);
                 System.out.println(" [x] Received '" + message + "'");
-                doWork(message);
+                if(message.compareTo("Game lobby is full!")!=0){
+                    flag_gamefull.set(false);
+                    doWork(message);
+                }
+                else {
+                    flag_gamefull.set(true);
+                }
             };
             CancelCallback cancelCallback=consumerTag -> {
                 System.out.println(" [x] CancelCallback invoked");
@@ -132,7 +137,9 @@ public class Observer {
 
             // TODO: Consume with deliver and cancel callbacks
             channelToRabbitMq.basicConsume(queueName,true,deliverCallback,cancelCallback);
-
+            if(flag_gamefull.get()){
+                channelToRabbitMq.queueUnbind(queueName, exchangeName, exchangeBindingKeys);
+            }
         } catch (Exception e) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.toString());
         }
@@ -166,14 +173,13 @@ public class Observer {
     }
 
     public void doWork(String message){
-        if (message.compareTo("Game created, waiting for players!")==0){
+        if (message.compareTo("Game created, waiting for players!")==0 || message.compareTo("Player joined, waiting for more players!")==0 || message.compareTo("Game is full, starting game!")==0){
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, message);
             return;
         }
-        else if(message.contains("START")){
+        else if(message.startsWith("Start")) {
             Game.Start(message);
-        } else {
-            Game.updateGUI(message);
+            return;
         }
     }
 

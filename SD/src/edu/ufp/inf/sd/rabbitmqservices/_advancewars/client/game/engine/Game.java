@@ -67,14 +67,14 @@ public class Game extends JFrame implements Serializable {
 	public static Image img_exts;
 	public static Boolean readytopaint;
 	
-	//This handles the different edu.ufp.inf.sd.rmi._advancewars.client.game.players and also is used to speed logic arrays (contains a list of all characters they own)
-	public static List<Base> player = new ArrayList<Base>();
-	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base> builds = new ArrayList<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base>();
-	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base> units = new ArrayList<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base>();
+	//This handles the different edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players and also is used to speed logic arrays (contains a list of all characters they own)
+	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base> player = new ArrayList<>();
+	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base> builds = new ArrayList<>();
+	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base> units = new ArrayList<>();
 	//These are the lists that will hold commander, building, and unit data to use in the menu's
-	public static List<Base> displayC = new ArrayList<Base>();
-	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base> displayB = new ArrayList<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base>();
-	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base> displayU = new ArrayList<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base>();
+	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base> displayC = new ArrayList<>();
+	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base> displayB = new ArrayList<>();
+	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base> displayU = new ArrayList<>();
 	
 	public Game() throws RemoteException{
 		super (name);
@@ -86,7 +86,7 @@ public class Game extends JFrame implements Serializable {
 		setResizable(false);
 	    setLocationRelativeTo(null);
 				
-		//Creates all the edu.ufp.inf.sd.rmi._advancewars.client.game.gui elements and sets them up
+		//Creates all the edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui elements and sets them up
 		gui = new Gui(this);
 		add(gui);
 		gui.setFocusable(true);
@@ -95,7 +95,7 @@ public class Game extends JFrame implements Serializable {
 		//load images, initialize the map, and adds the input settings.
 		load = new LoadImages();
 		map = new Map();
-		input = new InputHandler();
+		input = new InputHandler(id);
 		list = new ListData();
 		
 		setVisible(true);//This has been moved down here so that when everything is done, it is shown.
@@ -160,20 +160,23 @@ public class Game extends JFrame implements Serializable {
 
 
 	public static void Start(String message) {
-		Game.btl.NewGame(gl.getMap());
-		int[] commanders = gl.getArrayOfCommanders();
+		String[] split = message.split(" "); //Start map commanderarray
+		Game.btl.NewGame(split[1]);
+		String commanderString = split[2];
+		String[] commandersplit = commanderString.split("");
+		int[] commanders = new int[commanderString.length()];
+		for(int i=0;i<commanderString.length();i++){
+			commanders[i] = Integer.parseInt(commandersplit[i]);
+		}
 		boolean[] placeHolderNPC = {false,false,false,false};
 		Game.btl.AddCommanders(commanders, placeHolderNPC, 100, 50);
 		MenuHandler.CloseMenu();
 		Game.gui.InGameScreen();
-		Game.btl.subjectRI = gl.getSubject();
 		Game.btl.idFromGame = id;
-		this.setGg(this);
 	}
 
 	public static void updateGUI(String MovementOrAction) {
 		Base ply = Game.player.get(Game.btl.currentplayer);
-		SubjectRI sri = getGameSessionRI().getGameIDfromLobby(id).getSubject();
 		if(MovementOrAction.startsWith("BUY UNIT")){
 			String[] split = MovementOrAction.split(" "); //BUY UNIT TYPE X Y CURRENTPLAYER
 			int type = Integer.parseInt(split[2]);
@@ -216,7 +219,7 @@ public class Game extends JFrame implements Serializable {
 				Game.player.get(Game.btl.currentplayer).Cancle();
 				break;
 			case "START-MENU":
-				new Pause(getGg(),sri);
+				new Pause(getGg());
 				break;
 			case "END-TURN":
 				MenuHandler.CloseMenu();
@@ -235,5 +238,5 @@ public class Game extends JFrame implements Serializable {
 	}
 
 	/**Starts a new game when launched.*/
-	public static void main(String args[]) throws Exception {new Game(null);}
+	public static void main(String args[]) throws Exception {new Game();}
 }

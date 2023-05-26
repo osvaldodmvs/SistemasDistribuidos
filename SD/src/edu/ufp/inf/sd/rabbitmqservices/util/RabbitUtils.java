@@ -25,18 +25,16 @@ public class RabbitUtils {
         //Default credentials are: guest/guest (change accordingly)
         factory.setUsername(username);
         factory.setPassword(passwd);
-
+        Logger.getAnonymousLogger().log(Level.INFO, Thread.currentThread().getName() + "Successfully set host, port, username, password -> " + host + " " + port + " " + username + " " + passwd);
         //Create a channel which offers most of the API methods MAIL_TO_ADDR rabbitmq broker
-        Connection connection=factory.newConnection();
-        return connection;
+        return factory.newConnection();
     }
 
     /**
      * Create a channel to the rabbitmq server/broker
      */
     public static Channel createChannel2Server(Connection connection) throws IOException, TimeoutException {
-        Channel channel=connection.createChannel();
-        return channel;
+        return connection.createChannel();
     }
 
     /**

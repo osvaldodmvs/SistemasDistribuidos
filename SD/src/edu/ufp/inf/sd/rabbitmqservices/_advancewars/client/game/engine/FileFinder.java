@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 import java.io.File;
 import javax.swing.DefaultListModel;
@@ -22,7 +22,7 @@ public class FileFinder {
 		String name;
 		File folder = new File(mappath);
 		if (folder.mkdir()) {
-			edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.error.ShowError("The " + mappath + " folder was created.");
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.error.ShowError("The " + mappath + " folder was created.");
 		    //TODO: Transfer pre-made map files into here, or include src/maps/ to the list of maps somehow.
 		}
 		File[] filelist = folder.listFiles();
@@ -42,7 +42,7 @@ public class FileFinder {
 		String name;
 		File folder = new File(packpath);
 		if (folder.mkdir()) {
-            edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.error.ShowError("The " + packpath + " folder was created.");}
+            edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.error.ShowError("The " + packpath + " folder was created.");}
 		File[] filelist = folder.listFiles();
 		DefaultListModel ListModel = new DefaultListModel();
 		for (int i = 0; i < filelist.length; i++) {

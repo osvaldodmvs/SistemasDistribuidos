@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
 
 /**
  * Keyboard handling for the game along with the mouse setup for game handling.
- * Menus are being moved to edu.ufp.inf.sd.rmi._advancewars.client.game.gui.gms
+ * Menus are being moved to edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.gms
  * @author SergeDavid
  * @version 0.1
  */
@@ -53,8 +53,7 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 	private final int main = MouseEvent.BUTTON1;
 	private final int alt = MouseEvent.BUTTON1;
 	
-	public InputHandler(GameSessionRI gsri, String id) {
-		this.gsri=gsri;
+	public InputHandler(String id) {
 		this.gameID=id;
 		Game.gui.addKeyListener(this);
 		Game.gui.addMouseListener(this);
@@ -66,20 +65,6 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 		if (i==exit) {System.exit(0);}
 		if (Game.GameState== Game.State.PLAYING) {
 			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base ply = Game.player.get(Game.btl.currentplayer);
-			try {
-				//chamar metodo dentro observer q envia mensagem para o servidor
-				GameLobby gl = gsri.getGameIDfromLobby(gameID);
-				SubjectRI sri = gl.getSubject();
-				if (i==up) sri.setState(new State(gameID,"UP"));
-				else if (i==down) sri.setState(new State(gameID,"DOWN"));
-				else if (i==left) sri.setState(new State(gameID,"LEFT"));
-				else if (i==right) sri.setState(new State(gameID,"RIGHT"));
-				else if (i==select) sri.setState(new State(gameID,"SELECT"));
-				else if (i==cancel) sri.setState(new State(gameID,"CANCEL"));
-				else if (i==start) sri.setState(new State(gameID,"START-MENU"));
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
 		}
 		if (Game.GameState== Game.State.EDITOR) {
 			if (i==up) {
@@ -102,7 +87,7 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 				new EditorMenu();
 			}
 		}
-		
+
 		if (i==dev1) {
 			try {
 				Game.gui.LoginScreen();

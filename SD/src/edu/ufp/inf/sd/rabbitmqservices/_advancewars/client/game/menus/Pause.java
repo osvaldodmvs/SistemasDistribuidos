@@ -5,11 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import javax.swing.JButton;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.MenuHandler;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.menus.Options;
-import edu.ufp.inf.sd.rmi._advancewars.server.State;
-import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.Options;
 
 /**
  * This is the pause menu that is pulled up when you press the Enter button in game.
@@ -17,8 +15,6 @@ import edu.ufp.inf.sd.rmi._advancewars.server.SubjectRI;
  * @version 0.3
  */
 public class Pause implements ActionListener {
-	SubjectRI sri;
-
 	Game g;
 	JButton Help = new JButton("Help");
 	JButton Save = new JButton("Save");
@@ -27,12 +23,11 @@ public class Pause implements ActionListener {
 	JButton Resume = new JButton("Resume");
 	JButton Quit = new JButton("Quit");
 	
-	public Pause(Game g,SubjectRI sri) {
+	public Pause(Game g) {
 		Point size = MenuHandler.PrepMenu(120,180);
 		SetBounds(size);
 		AddGui();
 		AddListeners();
-		this.sri = sri;
 		this.g = g;
 	}
 	private void SetBounds(Point size) {
@@ -68,11 +63,7 @@ public class Pause implements ActionListener {
 			}
 		}
 		else if (s==EndTurn) {
-			try {
-				sri.setState(new State(g.getId(),"END-TURN"));
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			};
+			//TODO ENDTURN RABBIT CODE
 		}
 		else if (s==Resume) {MenuHandler.CloseMenu();}
 		else if (s==Save) {Game.save.SaveGame();}

@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base;
 
 public class Andy extends Base {
 	

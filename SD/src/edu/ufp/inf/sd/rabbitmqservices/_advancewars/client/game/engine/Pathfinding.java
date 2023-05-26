@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 import java.awt.Point;
 import java.util.Vector;
@@ -12,7 +12,7 @@ public class Pathfinding {
 	public Vector<PathNode> closedlist = new Vector<PathNode>();
 	
 	//Used for tracking the currently selected node and a shortcut to the currently selected unit.
-	private edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base unit;
+	private edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base unit;
 	private PathNode current;
 	private int distance;
 	
@@ -25,8 +25,8 @@ public class Pathfinding {
 	public boolean ShowHits;
 	public long LastChanged = 1;
 	
-	public Vector<Point> FindPath(edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base unit, int range) {
-		maphits = new int[edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.map.height][edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.map.width];
+	public Vector<Point> FindPath(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base unit, int range) {
+		maphits = new int[edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.map.height][edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.map.width];
 		openlist = new Vector<PathNode>();
 		closedlist = new Vector<PathNode>();
 		map = new Vector<Point>();
@@ -73,10 +73,10 @@ public class Pathfinding {
 		if (current.loc.y-1>=0&&unit.PathCheck(current.loc.x, current.loc.y-1)) {
 			AddNode(current.loc.x,current.loc.y-1);
 		}
-		if (current.loc.x+1< edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.map.width&&unit.PathCheck(current.loc.x+1, current.loc.y)) {
+		if (current.loc.x+1< edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.map.width&&unit.PathCheck(current.loc.x+1, current.loc.y)) {
 			AddNode(current.loc.x+1,current.loc.y);
 		}
-		if (current.loc.y+1< edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.map.height) {
+		if (current.loc.y+1< edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.map.height) {
 			if (unit.PathCheck(current.loc.x, current.loc.y+1)) {
 				AddNode(current.loc.x,current.loc.y+1);
 			}
@@ -113,13 +113,13 @@ public class Pathfinding {
 	}
 	
 	private void SwitchParent(PathNode node) {
-		double cost = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.map.map[node.loc.y][node.loc.x].speed() + current.cost;
+		double cost = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.map.map[node.loc.y][node.loc.x].speed() + current.cost;
 		if (cost<node.cost) {
 			node.cost = Math.round(cost*100.0) / 100.0;
 		}
 	}
 	private void SwitchParentClosed(PathNode node) {
-		double cost = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.map.map[node.loc.y][node.loc.x].speed() + current.cost;
+		double cost = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.map.map[node.loc.y][node.loc.x].speed() + current.cost;
 		if (cost<node.cost) {
 			node.cost = Math.round(cost*100.0) / 100.0;
 			closedlist.remove(node);
@@ -128,7 +128,7 @@ public class Pathfinding {
 	}
 	
 	private double FindCost(int x, int y, PathNode parent) {
-		double cost = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.map.map[y][x].speed();
+		double cost = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.map.map[y][x].speed();
 		if (parent!=null) {
 			cost+=parent.cost;
 		}
@@ -143,7 +143,7 @@ public class Pathfinding {
 		}
 	}
 	private boolean Occupied(int x, int y) {
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base unit : Game.units) {
+		for (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base unit : Game.units) {
 			if (unit.x == x && unit.y == y) {
 				return true;
 			}

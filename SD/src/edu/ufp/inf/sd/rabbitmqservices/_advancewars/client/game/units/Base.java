@@ -2,7 +2,7 @@ package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units;
 
 import java.awt.Point;
 import java.util.Vector;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 public class Base {
 	public String name = "Missing No.";
@@ -44,9 +44,9 @@ public class Base {
 	
 	//Battle Settings 
 	//TODO: Add alternate weapon setup
-	public boolean MoveAndShoot = true;//Allows edu.ufp.inf.sd.rmi._advancewars.client.game.units to move then shoot, or make them stay in the same location in order to attack.
+	public boolean MoveAndShoot = true;//Allows edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units to move then shoot, or make them stay in the same location in order to attack.
 	public int MaxAtkRange = 1;//How many squares away from the unit can it attack. (1 being default, 0 being none)
-	public int MinAtkRange = 1;//This is used for ranged edu.ufp.inf.sd.rmi._advancewars.client.game.units such as artillery.
+	public int MinAtkRange = 1;//This is used for ranged edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units such as artillery.
 	public int[] MainAttack = {//Base damage to each unit.
 			55,50,10,20,//Ground
 			20,//Air
@@ -80,7 +80,7 @@ public class Base {
 	public boolean PathCheck(int destx, int desty) {
 		if (destx<0||desty<0) {return false;}
 		if (destx>=Game.map.width||desty>=Game.map.height) {return false;}
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base unit : Game.units) {//Allows edu.ufp.inf.sd.rmi._advancewars.client.game.units in the same team to walk past each other.
+		for (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base unit : Game.units) {//Allows edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units in the same team to walk past each other.
 			if (unit.x==destx&&unit.y==desty&&Game.player.get(unit.owner).team!=Game.player.get(owner).team) {
 				return false;
 			}
@@ -108,14 +108,14 @@ public class Base {
 	 * Attacks someone at X,Y and either returns fire or not.
 	 * @param destx = Attacked Y location
 	 * @param desty = Attacked X location
-	 * @param returnfire = Allows edu.ufp.inf.sd.rmi._advancewars.client.game.units to shoot back and not cause a never ending loop until someone dies.
+	 * @param returnfire = Allows edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units to shoot back and not cause a never ending loop until someone dies.
 	 * @return Returns true if the unit attacked something, returns false if it didn't. (so it can see if it can capture a building)
 	 */
 	public boolean attack(int destx, int desty, boolean returnfire) {
 		//Disables the ability to attack when a unit has already moved positions.
 		if ((x != oldx && y != oldy) && !MoveAndShoot) {return false;}
 
-		edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base target = FindTarget(destx, desty, true, false);
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base target = FindTarget(destx, desty, true, false);
 		if (target!=null) {
 			if (inrange(target.x, target.y)) {		
 				
@@ -146,7 +146,7 @@ public class Base {
 		if (!raider) {return;}
 		if (destx==x&&desty==y) {
 			if (bld!=-1) {
-				edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base city = Game.builds.get(bld);
+				edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base city = Game.builds.get(bld);
 				if (city.team!=Game.player.get(owner).team) {
 					city.Capture((int) (health/10*Game.player.get(owner).CaptureBonus),owner);
 				}
@@ -222,8 +222,8 @@ public class Base {
 		}
 	}
 	/**This finds a unit with the x and y coordinates and returns their data to be used, friendly-fire set to true to find allies, hostile-fire to attack foes.*/
-	private edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base FindTarget(int destx, int desty, boolean hostilefire, boolean friendlyfire) {
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base unit : Game.units) {
+	private edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base FindTarget(int destx, int desty, boolean hostilefire, boolean friendlyfire) {
+		for (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base unit : Game.units) {
 			if (Game.player.get(unit.owner).team!=Game.player.get(owner).team||friendlyfire) {
 				if (unit.x==destx&&unit.y==desty) {return unit;}
 			}

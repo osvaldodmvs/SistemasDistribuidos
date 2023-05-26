@@ -1,12 +1,12 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui;
 
 import java.awt.Graphics2D;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rmi._advancewars.client.game.gui.ActionInfo;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.ActionInfo;
 
 /**
- * This will draw all of the currently visible edu.ufp.inf.sd.rmi._advancewars.client.game.units.
- * Units not owned by the current player are turned around. (Simple way of telling edu.ufp.inf.sd.rmi._advancewars.client.game.units with the same color apart)
+ * This will draw all of the currently visible edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.
+ * Units not owned by the current player are turned around. (Simple way of telling edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units with the same color apart)
  * @param g = The Graphics2D to drawn too.
  * @param resize = Size setup of the window to use.
  * @author SergeDavid
@@ -18,7 +18,7 @@ public class Units {
 		int xoff = Game.view.ViewX();
 		int yoff = Game.view.ViewY();
 		
-		for (edu.ufp.inf.sd.rmi._advancewars.client.game.units.Base chars : Game.units) {
+		for (edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base chars : Game.units) {
 			if (Game.view.Viewable(chars.x,chars.y)) {
 				int[] loc = chars.DrawMe();
 				if (chars.owner == Game.btl.currentplayer) {

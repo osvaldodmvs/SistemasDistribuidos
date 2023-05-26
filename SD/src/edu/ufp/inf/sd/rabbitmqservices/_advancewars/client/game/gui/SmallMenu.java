@@ -1,11 +1,11 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base;
 
 /**
  * @param g = The Graphics2D to drawn too.
@@ -16,7 +16,7 @@ import edu.ufp.inf.sd.rmi._advancewars.client.game.buildings.Base;
 public class SmallMenu {
 	public static void Draw(Graphics2D g, int resize) {
 		int size = (int) Math.pow(2, Game.load.Times_Player+1);
-		edu.ufp.inf.sd.rmi._advancewars.client.game.players.Base ply = Game.player.get(Game.btl.currentplayer);
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base ply = Game.player.get(Game.btl.currentplayer);
 		int x = (int) (Game.gui.width * 0.75);
 		int y = (int) (Game.gui.height * 0.75);
 		if (OtherSide()) {

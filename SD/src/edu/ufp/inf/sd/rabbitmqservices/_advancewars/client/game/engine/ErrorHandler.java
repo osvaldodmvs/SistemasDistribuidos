@@ -1,6 +1,6 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
-import edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,7 +14,7 @@ import javax.swing.JPanel;
  * This Class handles showing all the error messages that crop up through the game.
  * ErrorTicker(); Needs to be placed in the game loop (fps section preferred) so that the message disappears after a set time. (6 seconds)
  * To display a message, just call ShowError("Stupid message!");
- * Include if(showing) {edu.ufp.inf.sd.rmi._advancewars.client.game.gui.add(this);} when changing edu.ufp.inf.sd.rmi._advancewars.client.game.gui elements (As I remove all elements when changing between game states such as in game / main menu / editor)
+ * Include if(showing) {edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui.add(this);} when changing edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui elements (As I remove all elements when changing between game states such as in game / main menu / editor)
  * @author SergeDavid
  * @version 0.2
  */
@@ -44,28 +44,28 @@ public class ErrorHandler extends JPanel {
 		if (showing) {hiddenlist.add(message);}
 		else {text.setText(message);}
 		ResetSize();
-		edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.gui.add(this);
+		edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.gui.add(this);
 		showing=true;
 		showtime = 5;
 	}
-	/**This removes the error message from the edu.ufp.inf.sd.rmi._advancewars.client.game.gui and sets the boolean to false.*/
+	/**This removes the error message from the edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.gui and sets the boolean to false.*/
 	private void HideError() {
 		if (hiddenlist.isEmpty()) {
-			edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.gui.remove(this);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.gui.remove(this);
 			showing=false;	
 		}
 		else {
 			text.setText(hiddenlist.get(0));
 			hiddenlist.remove(0);
-			edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.gui.remove(this);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.gui.remove(this);
 			ResetSize();
-			edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.gui.add(this);
+			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.gui.add(this);
 			showtime = 2;
 		}
 	}
 	/**This changes the width, height, and offset so that it stays in the center and shows the whole message.*/
 	private void ResetSize() {
-		Insets insets = edu.ufp.inf.sd.rmi._advancewars.client.game.engine.Game.gui.getInsets();
+		Insets insets = edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game.gui.getInsets();
 		Dimension size = Game.gui.getPreferredSize();
 		Dimension size2 = text.getPreferredSize();
 		//sets the size and what not of the text to be shown and what not
