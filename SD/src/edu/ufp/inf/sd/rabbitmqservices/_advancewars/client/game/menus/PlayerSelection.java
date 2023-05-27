@@ -9,8 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
-import edu.ufp.inf.sd.rabbitmqservices._advancewars.server.GameLobby;
 
 /**
  * This deals with player and battle options setup (might split it) such as npc, team, commander, starting money, turn money, fog, etc.
@@ -102,11 +100,7 @@ public class PlayerSelection implements ActionListener {
 		Object s = e.getSource();
 		if (s == Return) {
 			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler.CloseMenu();
-			try {
-				Game.gui.LoginScreen();
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
+			Game.gui.LoginScreen();
 		}
 		//quando cliente clica no start
 		else if(s == ThunderbirdsAreGo) {

@@ -109,11 +109,7 @@ public class EditorMenu implements ActionListener {
 			MenuHandler.CloseMenu();
 		}
 		else if (s==Quit) {
-			try {
-				Game.gui.LoginScreen();
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
+			Game.gui.LoginScreen();
 		}
 	}
 }

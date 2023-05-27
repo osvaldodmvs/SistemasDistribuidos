@@ -1,9 +1,11 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.Observer;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.EditorMenu;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.StartMenu;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.server.GameLobby;
+import edu.ufp.inf.sd.rmi._advancewars.server.State;
 
 
 import java.awt.event.ActionEvent;
@@ -12,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
@@ -25,7 +28,9 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 	
 	//Development buttons and the exit game button (escape key)
 
-	private String gameID;
+	private Observer observer;
+
+	private Game game;
 
 	private final int dev1 = KeyEvent.VK_NUMPAD1;
 	private final int dev2 = KeyEvent.VK_NUMPAD2;
@@ -53,8 +58,8 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 	private final int main = MouseEvent.BUTTON1;
 	private final int alt = MouseEvent.BUTTON1;
 	
-	public InputHandler(String id) {
-		this.gameID=id;
+	public InputHandler(Game g) {
+		game=g;
 		Game.gui.addKeyListener(this);
 		Game.gui.addMouseListener(this);
 	}
@@ -65,6 +70,18 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 		if (i==exit) {System.exit(0);}
 		if (Game.GameState== Game.State.PLAYING) {
 			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base ply = Game.player.get(Game.btl.currentplayer);
+			try {
+				String room = Game.getObserver().getRoom();
+				if (i==up) Game.getObserver().sendMessage("UP/"+room);
+				else if (i==down) Game.getObserver().sendMessage("DOWN/"+room);
+				else if (i==left) Game.getObserver().sendMessage("LEFT/"+room);
+				else if (i==right) Game.getObserver().sendMessage("RIGHT/"+room);
+				else if (i==select) Game.getObserver().sendMessage("SELECT/"+room);
+				else if (i==cancel) Game.getObserver().sendMessage("CANCEL/"+room);
+				else if (i==start) Game.getObserver().sendMessage("START-MENU/"+room);
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 		if (Game.GameState== Game.State.EDITOR) {
 			if (i==up) {
@@ -89,11 +106,7 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 		}
 
 		if (i==dev1) {
-			try {
-				Game.gui.LoginScreen();
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
+			Game.gui.LoginScreen();
 		}
 		else if (i==dev2) {
             Game.load.LoadTexturePack("Test");}

@@ -34,7 +34,7 @@ public class Gui extends JPanel {
 	}
 
 	/**Creates the Login screen layout*/
-	public void LoginScreen() throws RemoteException {
+	public void LoginScreen() {
 		Game.GameState=Game.State.MENU;
 		removeAll();
 		new StartMenu(ThisMadeMeWantToRageQuit);

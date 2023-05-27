@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
 
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.Observer;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.*;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Gui;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Map;
@@ -18,8 +19,10 @@ import java.util.UUID;
 import javax.swing.JFrame;
 
 public class Game extends JFrame implements Serializable {
-	private static final String id = UUID.randomUUID().toString();
+	private static String id;
 	private static Game gg;
+
+	private static Observer observer;
 	private static final long serialVersionUID = 1L;
 	
 	//Application Settings
@@ -76,8 +79,10 @@ public class Game extends JFrame implements Serializable {
 	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base> displayB = new ArrayList<>();
 	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base> displayU = new ArrayList<>();
 	
-	public Game() throws RemoteException{
+	public Game(String message, String username, Observer obs){
 		super (name);
+		id = username;
+		observer = obs;
 		//Default Settings of the JFrame
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setSize(new Dimension(20*ScreenBase+6,12*ScreenBase+12));
@@ -95,16 +100,28 @@ public class Game extends JFrame implements Serializable {
 		//load images, initialize the map, and adds the input settings.
 		load = new LoadImages();
 		map = new Map();
-		input = new InputHandler(id);
+		input = new InputHandler(this);
 		list = new ListData();
-		
 		setVisible(true);//This has been moved down here so that when everything is done, it is shown.
-		gui.LoginScreen();
+
+		String[] split = message.split(" "); //Start map commanderarray
+		String commanderString = split[2];
+		String[] commandersplit = commanderString.split("");
+		int[] commanders = new int[commanderString.length()];
+		for(int i=0;i<commanderString.length();i++){
+			commanders[i] = Integer.parseInt(commandersplit[i]);
+		}
+		boolean[] placeHolderNPC = {false,false,false,false};
+		Game.btl.NewGame(split[1]);
+		Game.btl.AddCommanders(commanders, placeHolderNPC, 100, 50);
+		Game.gui.InGameScreen();
+
+		gui.InGameScreen();
 		save.LoadSettings();
 		GameLoop();
 	}
 
-	private void GameLoop() throws RemoteException {
+	private void GameLoop() {
 		boolean loop=true;
 		long last = System.nanoTime();
 		long lastCPSTime = 0;
@@ -150,7 +167,7 @@ public class Game extends JFrame implements Serializable {
 			else logics++;
 			
 			//Paints the scene then sleeps for a bit.
-			try { Thread.sleep(30);} catch (Exception e) {};
+			try { Thread.sleep(30);} catch (Exception ignored) {};
 		}
 	}
 
@@ -159,20 +176,8 @@ public class Game extends JFrame implements Serializable {
 	}
 
 
-	public static void Start(String message) {
-		String[] split = message.split(" "); //Start map commanderarray
-		Game.btl.NewGame(split[1]);
-		String commanderString = split[2];
-		String[] commandersplit = commanderString.split("");
-		int[] commanders = new int[commanderString.length()];
-		for(int i=0;i<commanderString.length();i++){
-			commanders[i] = Integer.parseInt(commandersplit[i]);
-		}
-		boolean[] placeHolderNPC = {false,false,false,false};
-		Game.btl.AddCommanders(commanders, placeHolderNPC, 100, 50);
-		MenuHandler.CloseMenu();
-		Game.gui.InGameScreen();
-		Game.btl.idFromGame = id;
+	public static void Start(String message, Observer obs) {
+		new Game(message,id,obs);
 	}
 
 	public static void updateGUI(String MovementOrAction) {
@@ -191,23 +196,29 @@ public class Game extends JFrame implements Serializable {
 			}
 			return;
 		}
-		switch (MovementOrAction) {
+		System.out.println("Im in UpdateGUI with movement -> " + MovementOrAction);
+		switch (MovementOrAction){
 			case "UP":
+				System.out.println("UP");
 				ply.selecty--;
-				if (ply.selecty < 0)
+				if (ply.selecty < 0) {
 					ply.selecty++;
+				}
 				break;
 			case "DOWN":
+				System.out.println("DOWN");
 				ply.selecty++;
 				if (ply.selecty >= Game.map.height)
 					ply.selecty--;
 				break;
 			case "LEFT":
+				System.out.println("LEFT");
 				ply.selectx--;
 				if (ply.selectx<0)
 					ply.selectx++;
 				break;
 			case "RIGHT":
+				System.out.println("RIGHT");
 				ply.selectx++;
 				if (ply.selectx>=Game.map.width)
 					ply.selectx--;
@@ -219,7 +230,7 @@ public class Game extends JFrame implements Serializable {
 				Game.player.get(Game.btl.currentplayer).Cancle();
 				break;
 			case "START-MENU":
-				new Pause(getGg());
+				new Pause();
 				break;
 			case "END-TURN":
 				MenuHandler.CloseMenu();
@@ -237,6 +248,14 @@ public class Game extends JFrame implements Serializable {
 		Game.gg = gg;
 	}
 
+	public static Observer getObserver() {
+		return observer;
+	}
+
+	public void setObserver(Observer observer) {
+		Game.observer = observer;
+	}
+
 	/**Starts a new game when launched.*/
-	public static void main(String args[]) throws Exception {new Game();}
+	public static void main(String args[]) throws Exception {new Game(null,null,null);}
 }

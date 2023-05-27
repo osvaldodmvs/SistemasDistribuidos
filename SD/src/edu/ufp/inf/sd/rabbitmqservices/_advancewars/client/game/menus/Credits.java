@@ -54,11 +54,7 @@ public class Credits implements ActionListener {
 		Object s = e.getSource();
 		if (s==Return) {
 			MenuHandler.CloseMenu();
-			try {
-				Game.gui.LoginScreen();
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
+			Game.gui.LoginScreen();
 		}
 	}	
 }

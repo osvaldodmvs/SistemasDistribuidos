@@ -75,11 +75,7 @@ public class EditorStart implements ActionListener {
 			MenuHandler.CloseMenu();
 		}
 		if (s==Return) {
-			try {
-				Game.gui.LoginScreen();
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
+			Game.gui.LoginScreen();
 		}
 	}
 }

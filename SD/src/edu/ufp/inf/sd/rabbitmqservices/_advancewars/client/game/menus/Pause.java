@@ -3,8 +3,11 @@ package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import javax.swing.JButton;
+
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.Observer;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.MenuHandler;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.Options;
@@ -15,7 +18,7 @@ import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.Options;
  * @version 0.3
  */
 public class Pause implements ActionListener {
-	Game g;
+	Observer observer;
 	JButton Help = new JButton("Help");
 	JButton Save = new JButton("Save");
 	JButton Options = new JButton("Options");
@@ -23,12 +26,11 @@ public class Pause implements ActionListener {
 	JButton Resume = new JButton("Resume");
 	JButton Quit = new JButton("Quit");
 	
-	public Pause(Game g) {
+	public Pause() {
 		Point size = MenuHandler.PrepMenu(120,180);
 		SetBounds(size);
 		AddGui();
 		AddListeners();
-		this.g = g;
 	}
 	private void SetBounds(Point size) {
 		Resume.setBounds(size.x+10, size.y+10, 100, 24);
@@ -56,14 +58,15 @@ public class Pause implements ActionListener {
 		Object s = e.getSource();
 		if (s==Quit) {
 			MenuHandler.CloseMenu();
-			try {
-				Game.gui.LoginScreen();
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
+			Game.gui.LoginScreen();
 		}
 		else if (s==EndTurn) {
 			//TODO ENDTURN RABBIT CODE
+			try {
+				Game.getObserver().sendMessage("ENDTURN/"+observer.getRoom());
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 		else if (s==Resume) {MenuHandler.CloseMenu();}
 		else if (s==Save) {Game.save.SaveGame();}

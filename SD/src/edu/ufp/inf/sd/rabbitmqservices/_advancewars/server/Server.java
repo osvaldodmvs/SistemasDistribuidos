@@ -10,6 +10,11 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
+import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.Pause;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static edu.ufp.inf.sd.rabbitmqservices._02_workqueues.consumer.SendMail.sendMail;
 
@@ -114,7 +119,7 @@ public class Server {
             //channel.queueDeclare(Send.QUEUE_NAME, false, false, false, null);
             //TODO : FILA PARA ONDES CLIENTES ENVIAM MENSAGENS
             channel.queueDeclare(queueName, durable, false, false, null);
-            System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+            System.out.println(" [*] Waiting for messages on queue '" + queueName + "'. To exit press CTRL+C");
 
             /* The server pushes messages asynchronously, hence we provide a DefaultConsumer callback
             that will buffer the messages until ready to use them. */
@@ -123,46 +128,20 @@ public class Server {
             channel.basicQos(prefetchCount);
 
             channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
-            //Create consumer which will doWork()
-            /*
-            final Consumer consumer = new DefaultConsumer(channel) {
-                @Override
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    String message = new String(body, "UTF-8");
-
-                    System.out.println(" [x] Received '" + message + "'");
-                    try {
-                        doWork(message);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-                    } finally {
-                        System.out.println(" [x] Done");
-                        //The Worker MUST Manually ACK each finalised task.
-                        //This code makes sure that even if worker is killed (CTRL+C) while processing a message,
-                        //nothing will be lost.
-                        //Soon after the worker dies all unacknowledged messages will be redelivered.
-                        //Ack must be sent on the same channel message was received on, otherwise raises exception
-                        //  (channel-level protocol exception).
-                        channel.basicAck(envelope.getDeliveryTag(), false);
-                    }
-                }
-            };
-            //Set this flag=false for worker to send a proper acknowledgment (once it is done with a task).
-            //boolean autoAck = true; //When true disables "Manual message acknowledgments"
-            boolean autoAck = false; //"Manual message acknowledgments" enabled
-            channel.basicConsume(NewTask.TASK_QUEUE_NAME, autoAck, consumer);
-            */
+            System.out.println(" [*] Declared exchange '" + exchangeName + "'.");
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
                 System.out.println(" [x] Received '" + message + "'");
                 //TODO doWork é o metodo que envia (publish) mensagem para o exchange
                 try {
                     if(message.contains(";")){
+                        System.out.println("Found a new or join game message ! ");
                         String[] split = message.split(";"); //0user 1newOrJoin 2room 3map 4commander
                         if(split[1].compareTo("new")==0){
-                            GameLobby g = new GameLobby(split[3],split[2],split[0],Integer.parseInt(split[4]));
+                            GameLobby g = new GameLobby(split[0],split[2],Integer.parseInt(split[3]),Integer.parseInt(split[4]));
                             db.addGame(g);
                             message="Game created, waiting for players!";
+                            System.out.println("Binding key is : "+split[2]);
                             channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
                         }
                         else{
@@ -170,10 +149,12 @@ public class Server {
                             int valid=g.addToGameLobby(split[0],Integer.parseInt(split[4]));
                             if(valid==-1){
                                 message="Game lobby is full!";
+                                System.out.println("Binding key is : "+split[2]);
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
                             }
                             else if(g.getPlayers().size()==g.getMaxPlayers()){
-                                message="Game is full, starting game!";
+                                message="Game is ready, starting game!";
+                                System.out.println("Binding key is : "+split[2]);
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
                                 message="Start "+g.getMap()+" "+g.returnCommanders();
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
@@ -181,11 +162,21 @@ public class Server {
                             }
                             else{
                                 message="Player joined, waiting for more players!";
+                                System.out.println("Binding key is : "+split[2]);
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
                             }
                         }
                     }
-                    channel.basicPublish(exchangeName,"routingkey",null,message.getBytes("UTF-8"));
+                    else if (message.contains("/")) {
+                        System.out.println("Message : " + message);
+                        String[] split = message.split("/");
+                        message = split[0];
+                        String routingKey = split[1];
+                        System.out.println("New Message : " + message);
+                        channel.basicPublish(exchangeName,routingKey,null,message.getBytes("UTF-8"));
+                        System.out.println(" [x] Sent '" + message + "'" + " to exchange '" + exchangeName + "' with routing key = " + routingKey);
+                    }
+                    //channel.basicPublish(exchangeName,"nothing really",null,message.getBytes("UTF-8"));
                 } finally {
                     System.out.println(" [x] Done processing task");
                     //Worker must Manually ack each finalised task, hence, even if worker is killed

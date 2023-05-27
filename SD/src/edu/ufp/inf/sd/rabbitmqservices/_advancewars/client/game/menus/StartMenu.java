@@ -48,7 +48,7 @@ public class StartMenu implements ActionListener {
 		MapList(size);
 }
 
-	public StartMenu(Game g) throws RemoteException {
+	public StartMenu(Game g) {
 		this.game = g;
 		Point size = MenuHandler.PrepMenu(600,280);
 		MenuHandler.HideBackground();

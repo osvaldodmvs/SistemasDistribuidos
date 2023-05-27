@@ -95,11 +95,7 @@ public class City implements ActionListener,ListSelectionListener {
 		Object s = e.getSource();
 		if (s==Return) {MenuHandler.CloseMenu();}
 		else if (s==Buy) {
-			try {
-				Game.btl.Buyunit(ids[Units.getSelectedIndex()], x, y);
-			} catch (RemoteException ex) {
-				throw new RuntimeException(ex);
-			}
+			Game.btl.Buyunit(ids[Units.getSelectedIndex()], x, y);
 			MenuHandler.CloseMenu();
 		}
 	}

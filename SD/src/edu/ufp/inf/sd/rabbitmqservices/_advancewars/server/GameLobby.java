@@ -23,12 +23,12 @@ public class GameLobby implements Serializable {
 		this.setNumPlayers(0);
 	}
 
-	public GameLobby(String map, String ID, String user, int commander) throws RemoteException {
-		this.setId(ID);
-		this.setMap(map);
-		this.setMaxPlayers(playersbymap(map));
-		this.setNumPlayers(1);
+	public GameLobby(String user, String id, int maxplayers, int commander) throws RemoteException {
 		this.players.add(user);
+		this.setId(id);
+		this.setMaxPlayers(maxplayers);
+		this.setMap(mapByPlayers(maxplayers));
+		this.setNumPlayers(1);
 		this.commanders.add(commander);
 	}
 
@@ -91,11 +91,11 @@ public class GameLobby implements Serializable {
 		return 0;
 	}
 
-	public int playersbymap(String map){
-		if(map.compareTo("FourCorners")==0){
-			return 4;
+	public String mapByPlayers(int maxPlayers){
+		if(maxPlayers==4){
+			return "FourCourners";
 		}
-		return 2;
+		return "SmallVs";
 	}
 
 	public String returnCommanders(){

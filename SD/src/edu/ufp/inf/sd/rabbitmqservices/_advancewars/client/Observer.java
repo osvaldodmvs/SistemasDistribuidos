@@ -54,9 +54,9 @@ public class Observer {
     //Store received message to be get by gui
     private String receivedMessage;
 
+    //user newOrJoin room max commander
 
     public Observer(String host, int port, String brokerUser, String brokerPass, String user, String newOrJoin, String room, int maxPlayers, String commander, String exchangeName, BuiltinExchangeType exchangeType, String messageFormat) throws IOException, TimeoutException {
-        this.game=new Game();
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, " going to attach advancewars_observer to host: " + host + "...");
 
         Connection connection=RabbitUtils.newConnection2Server(host, port, brokerUser, brokerPass);
@@ -71,21 +71,14 @@ public class Observer {
         this.maxPlayers=maxPlayers;
         this.commander=commander;
         // TODO: Set 2 binding keys (to receive msg from public room.general and private room.user
-        String bindingKey=room;
 
-        String map;
-
-        if(maxPlayers==4)
-            map="FourCorners";
-        else
-            map="SmallVs";
-
-        this.exchangeBindingKeys=bindingKey;
+        this.exchangeBindingKeys=room;
         this.messageFormat=messageFormat;
 
         bindExchangeToChannelRabbitMQ();
         attachConsumerToChannelExchangeWithKey();
-        String messageToSend = user + ";" + newOrJoin + ";" + room + ";" + map + ";" + commander;
+        String messageToSend = user + ";" + newOrJoin + ";" + room + ";" + maxPlayers + ";" + commander;
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Sending message '" + messageToSend + "'");
         sendMessage(messageToSend);
     }
 
@@ -110,10 +103,11 @@ public class Observer {
             String queueName = channelToRabbitMq.queueDeclare().getQueue();
 
             // TODO: Bind to routing key
-            System.err.println("main(): add queue bind to queue = " + queueName + ", with bindingKey = " + exchangeBindingKeys);
+            System.out.println("main(): add queue bind to queue = " + queueName + ", with bindingKey = " + exchangeBindingKeys);
 
             // TODO: Create binding: tell exchange to send messages to a queue
             channelToRabbitMq.queueBind(queueName, exchangeName, exchangeBindingKeys);
+            System.out.println("Binded to queue: " + queueName + " with routing key: " + exchangeBindingKeys + " and exchange: " + exchangeName);
             AtomicBoolean flag_gamefull= new AtomicBoolean(false);
 
             /* Use a DeliverCallback lambda function instead of DefaultConsumer to receive messages from queue;
@@ -123,9 +117,9 @@ public class Observer {
                 String message=new String(delivery.getBody(), "UTF-8");
                 setReceivedMessage(message);
                 System.out.println(" [x] Received '" + message + "'");
+                doWork(message);
                 if(message.compareTo("Game lobby is full!")!=0){
                     flag_gamefull.set(false);
-                    doWork(message);
                 }
                 else {
                     flag_gamefull.set(true);
@@ -153,9 +147,13 @@ public class Observer {
     public void sendMessage(String msgToSend) throws IOException {
         BasicProperties prop=MessageProperties.PERSISTENT_TEXT_PLAIN;
         //User maybe some <username> (private msg) or 'general' (public msg for all)
-
-        // TODO: Publish message with routing key
-        channelToRabbitMq.basicPublish(exchangeName, room, null, msgToSend.getBytes("UTF-8"));
+        //
+        // TODO: Publish message with routing key , in this case, the routing key will always be the same, as the server(s) is consuming from the same queue, as such...
+        String routingKey="advancewars";
+        // TODO : WARNING -> THIS IS THE ORIGINAL LINE BELOW
+        // channelToRabbitMq.basicPublish(exchangeName, routingKey, null, msgToSend.getBytes("UTF-8"));
+        channelToRabbitMq.basicPublish("", routingKey, null, msgToSend.getBytes("UTF-8"));
+        System.out.println(" [x] Sent '" + msgToSend + "'" + " to exchange '' with routing key = " + routingKey);
     }
 
     /**
@@ -173,14 +171,24 @@ public class Observer {
     }
 
     public void doWork(String message){
-        if (message.compareTo("Game created, waiting for players!")==0 || message.compareTo("Player joined, waiting for more players!")==0 || message.compareTo("Game is full, starting game!")==0){
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "IM IN DO_WORK WITH MESSAGE -> " + message);
+        if(message.startsWith("Game ")||message.startsWith("Player ")){
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, message);
             return;
         }
         else if(message.startsWith("Start")) {
-            Game.Start(message);
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "TRYING TO START WITH MESSAGE :" + message);
+            Game.Start(message, this);
             return;
         }
+        else{
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "RECEIVED MOVEMENT ---> " + message);
+            Game.updateGUI(message);
+        }
+    }
+
+    public String getRoom() {
+        return room;
     }
 
     public static void main(String[] args) {
