@@ -183,7 +183,7 @@ public class Game extends JFrame implements Serializable {
 	public static void updateGUI(String MovementOrAction) throws RemoteException {
 		Base ply = Game.player.get(Game.btl.currentplayer);
 		SubjectRI sri = getGameSessionRI().getGameIDfromLobby(id).getSubject();
-		if(MovementOrAction.startsWith("BUY UNIT")){
+		if(MovementOrAction.startsWith("BUY-UNIT")){
 			String[] split = MovementOrAction.split(" "); //BUY UNIT TYPE X Y CURRENTPLAYER
 			int type = Integer.parseInt(split[2]);
 			int x = Integer.parseInt(split[3]);

@@ -37,4 +37,14 @@ public class DBMockup {
         }
         return null;
     }
+
+    public boolean check_if_exists(String g) {
+        for (GameLobby gg : this.getGames()) {
+            if (gg.getId().compareTo(g) == 0) {
+                return true;
+            }
+            return true;
+        }
+        return false;
+    }
 }

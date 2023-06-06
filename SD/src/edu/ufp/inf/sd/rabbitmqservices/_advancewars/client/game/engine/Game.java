@@ -11,6 +11,7 @@ import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -21,8 +22,9 @@ import javax.swing.JFrame;
 public class Game extends JFrame implements Serializable {
 	private static String id;
 	private static Game gg;
-
 	private static Observer observer;
+
+	private static String room;
 	private static final long serialVersionUID = 1L;
 	
 	//Application Settings
@@ -79,10 +81,11 @@ public class Game extends JFrame implements Serializable {
 	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base> displayB = new ArrayList<>();
 	public static List<edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.units.Base> displayU = new ArrayList<>();
 	
-	public Game(String message, String username, Observer obs){
+	public Game(String message, String username, String room, Observer obs) throws IOException {
 		super (name);
 		id = username;
 		observer = obs;
+		room = room;
 		//Default Settings of the JFrame
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setSize(new Dimension(20*ScreenBase+6,12*ScreenBase+12));
@@ -115,13 +118,13 @@ public class Game extends JFrame implements Serializable {
 		Game.btl.NewGame(split[1]);
 		Game.btl.AddCommanders(commanders, placeHolderNPC, 100, 50);
 		Game.gui.InGameScreen();
-
+		this.setGg(this);
 		gui.InGameScreen();
 		save.LoadSettings();
 		GameLoop();
 	}
 
-	private void GameLoop() {
+	private void GameLoop() throws IOException {
 		boolean loop=true;
 		long last = System.nanoTime();
 		long lastCPSTime = 0;
@@ -175,19 +178,41 @@ public class Game extends JFrame implements Serializable {
 		return id;
 	}
 
+	public static void setId(String id) {
+		Game.id = id;
+	}
 
-	public static void Start(String message, Observer obs) {
-		new Game(message,id,obs);
+	public static String getRoom() {
+		return room;
+	}
+
+	public static void setRoom(String room) {
+		Game.room = room;
+	}
+
+	public static void Start(String message, String user, String room, Observer obs) {
+		Game.btl.idFromGame = id;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					new Game(message,user,room,obs);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}).start();
 	}
 
 	public static void updateGUI(String MovementOrAction) {
 		Base ply = Game.player.get(Game.btl.currentplayer);
-		if(MovementOrAction.startsWith("BUY UNIT")){
-			String[] split = MovementOrAction.split(" "); //BUY UNIT TYPE X Y CURRENTPLAYER
-			int type = Integer.parseInt(split[2]);
-			int x = Integer.parseInt(split[3]);
-			int y = Integer.parseInt(split[4]);
-			int currentplayer = Integer.parseInt(split[5]);
+		if(MovementOrAction.startsWith("BUY-UNIT")){
+			System.out.println("Im in UpdateGUI with action -> " + MovementOrAction);
+			String[] split = MovementOrAction.split(" "); //BUY-UNIT TYPE X Y CURRENTPLAYER
+			int type = Integer.parseInt(split[1]);
+			int x = Integer.parseInt(split[2]);
+			int y = Integer.parseInt(split[3]);
+			int currentplayer = Integer.parseInt(split[4]);
 			double cost = Game.displayU.get(type).cost*Game.player.get(currentplayer).CostBonus;
 			if (Game.player.get(currentplayer).money>=cost) {
 				Game.units.add(Game.list.CreateUnit(type, currentplayer, x, y, false));
@@ -196,7 +221,7 @@ public class Game extends JFrame implements Serializable {
 			}
 			return;
 		}
-		System.out.println("Im in UpdateGUI with movement -> " + MovementOrAction);
+		System.out.println("Im in UpdateGUI with action -> " + MovementOrAction);
 		switch (MovementOrAction){
 			case "UP":
 				System.out.println("UP");
@@ -230,9 +255,9 @@ public class Game extends JFrame implements Serializable {
 				Game.player.get(Game.btl.currentplayer).Cancle();
 				break;
 			case "START-MENU":
-				new Pause();
+				new Pause(getGg());
 				break;
-			case "END-TURN":
+			case "ENDTURN":
 				MenuHandler.CloseMenu();
 				Game.btl.EndTurn();
 				break;
@@ -257,5 +282,5 @@ public class Game extends JFrame implements Serializable {
 	}
 
 	/**Starts a new game when launched.*/
-	public static void main(String args[]) throws Exception {new Game(null,null,null);}
+	public static void main(String args[]) throws Exception {new Game(null,null,null,null);}
 }

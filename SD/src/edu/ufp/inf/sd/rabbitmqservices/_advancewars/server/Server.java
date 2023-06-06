@@ -9,14 +9,14 @@ import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
-import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
-import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.Pause;
+import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static edu.ufp.inf.sd.rabbitmqservices._02_workqueues.consumer.SendMail.sendMail;
 
 
 /**
@@ -95,7 +95,44 @@ import static edu.ufp.inf.sd.rabbitmqservices._02_workqueues.consumer.SendMail.s
 
 public class Server {
 
+    private static final String id = UUID.randomUUID().toString();
+
     private static DBMockup db=new DBMockup();
+
+    public static String find_room_by_user(String user){
+        for (GameLobby g : db.getGames()) {
+            for (String s: g.getPlayers()) {
+                if(s.compareTo(user)==0){
+                    return g.getId();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static GameLobby find_gl_by_user(String user){
+        for (GameLobby g : db.getGames()) {
+            for (String s: g.getPlayers()) {
+                if(s.compareTo(user)==0){
+                    return g;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static int get_index_by_user(String user){
+        int i = 0;
+        for (GameLobby g : db.getGames()) {
+            for (String s: g.getPlayers()) {
+                if(s.compareTo(user)==0){
+                    return i;
+                }
+                i++;
+            }
+        }
+        return -1;
+    }
 
     public static void main(String[] argv) throws Exception {
         try {
@@ -106,6 +143,7 @@ public class Server {
             int port = Integer.parseInt(argv[1]);
             String queueName = argv[2];
             String exchangeName = argv[3];
+            String faultToleranceExchange = argv[4];
 
             /* Open a connection and a channel, and declare the queue from which to consume.
             Declare the queue here, as well, because we might start the client before the publisher. */
@@ -119,8 +157,8 @@ public class Server {
             //channel.queueDeclare(Send.QUEUE_NAME, false, false, false, null);
             //TODO : FILA PARA ONDES CLIENTES ENVIAM MENSAGENS
             channel.queueDeclare(queueName, durable, false, false, null);
-            System.out.println(" [*] Waiting for messages on queue '" + queueName + "'. To exit press CTRL+C");
-
+            System.out.println(" [*] Waiting for client messages on queue '" + queueName + "'. To exit press CTRL+C");
+            //TODO : FILA PARA ONDES SERVIDORES ENVIAM MENSAGENS DE DB
             /* The server pushes messages asynchronously, hence we provide a DefaultConsumer callback
             that will buffer the messages until ready to use them. */
             //Set QoS: accept only one unacked message at a time; and force dispatch to next worker that is not busy.
@@ -129,20 +167,28 @@ public class Server {
 
             channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
             System.out.println(" [*] Declared exchange '" + exchangeName + "'.");
+            channel.exchangeDeclare(faultToleranceExchange, BuiltinExchangeType.FANOUT);
+            System.out.println(" [*] Declared exchange '" + faultToleranceExchange + "'.");
+            String faultToleranceQueue = channel.queueDeclare().getQueue();
+            channel.queueBind(faultToleranceQueue, faultToleranceExchange, "");
+            System.out.println(" [*] Bound queue '" + faultToleranceQueue + "' to exchange '" + faultToleranceExchange + "'.");
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
-                System.out.println(" [x] Received '" + message + "'");
+                System.out.println(" [x] <advancewars>  Received '" + message + "'");
                 //TODO doWork é o metodo que envia (publish) mensagem para o exchange
                 try {
                     if(message.contains(";")){
                         System.out.println("Found a new or join game message ! ");
                         String[] split = message.split(";"); //0user 1newOrJoin 2room 3map 4commander
-                        if(split[1].compareTo("new")==0){
+                        if(split[1].compareTo("new")==0 && !db.check_if_exists(split[2])){
                             GameLobby g = new GameLobby(split[0],split[2],Integer.parseInt(split[3]),Integer.parseInt(split[4]));
                             db.addGame(g);
                             message="Game created, waiting for players!";
                             System.out.println("Binding key is : "+split[2]);
                             channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                            message="CREATED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id;
+                            System.out.println("Sending CREATED message to fault tolerance exchange : "+message);
+                            channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
                         }
                         else{
                             GameLobby g = db.getGame(split[2]);
@@ -156,34 +202,63 @@ public class Server {
                                 message="Game is ready, starting game!";
                                 System.out.println("Binding key is : "+split[2]);
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
-                                message="Start "+g.getMap()+" "+g.returnCommanders();
+                                message="Start "+g.getMap()+" "+g.returnCommanders()+" "+g.getId();
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                                message="STARTED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id;
+                                System.out.println("Sending STARTED message to fault tolerance exchange : "+message);
+                                channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
                                 //TODO start game
                             }
                             else{
                                 message="Player joined, waiting for more players!";
                                 System.out.println("Binding key is : "+split[2]);
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
+                                message="JOINED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id;
+                                System.out.println("Sending JOINED message to fault tolerance exchange : "+message);
+                                channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
                             }
                         }
                     }
                     else if (message.contains("/")) {
-                        System.out.println("Message : " + message);
-                        String[] split = message.split("/");
-                        message = split[0];
-                        String routingKey = split[1];
-                        System.out.println("New Message : " + message);
-                        channel.basicPublish(exchangeName,routingKey,null,message.getBytes("UTF-8"));
-                        System.out.println(" [x] Sent '" + message + "'" + " to exchange '" + exchangeName + "' with routing key = " + routingKey);
+                        if (message.startsWith("BUY-")) {
+                            System.out.println("IM IN BUY UNIT SV");
+                            System.out.println(message);
+                            //BUY-UNIT/ type x y currentplayer sala
+                            String[] split_buy = message.split(" ");
+                            String routing = find_room_by_user(split_buy[5]);
+                            int current = Integer.parseInt(split_buy[4]);
+                            GameLobby gg = find_gl_by_user(split_buy[5]);
+                            if (gg.getJwts().get(current).compareTo(gg.getJwts().get(get_index_by_user(split_buy[5]))) == 0) {
+                                System.out.println("New Message : " + message);
+                                channel.basicPublish(exchangeName, routing, null, message.getBytes("UTF-8"));
+                                System.out.println(" [x] Sent '" + message + "'" + " to exchange '" + exchangeName + "' with routing key = " + routing);
+                                channel.basicPublish(exchangeName, routing, null, message.getBytes("UTF-8"));
+                            }
+                        } else {
+                            String[] split = message.split("/");
+                            message = split[0];
+                            String routingKey = find_room_by_user(split[1]);
+                            int currplayer = Integer.parseInt(split[2]);
+                            GameLobby g = find_gl_by_user(split[1]);
+                            if (g.getJwts().get(currplayer).compareTo(g.getJwts().get(get_index_by_user(split[1]))) == 0) {
+                                System.out.println("New Message : " + message);
+                                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                                System.out.println(" [x] Sent '" + message + "'" + " to exchange '" + exchangeName + "' with routing key = " + routingKey);
+                            } else {
+                                message = "Wrong player tried to play!";
+                                System.out.println("New Message : " + message);
+                                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                                System.out.println(" [x] Sent '" + message + "'" + " to exchange '" + exchangeName + "' with routing key = " + routingKey);
+                            }
+                        }
                     }
+
                     //channel.basicPublish(exchangeName,"nothing really",null,message.getBytes("UTF-8"));
+                } catch (NoSuchAlgorithmException e) {
+                    System.out.println(e);
+                    throw new RuntimeException(e);
                 } finally {
-                    System.out.println(" [x] Done processing task");
-                    //Worker must Manually ack each finalised task, hence, even if worker is killed
-                    //(CTRL+C) while processing a message, nothing will be lost.
-                    //Soon after the worker dies all unacknowledged messages will be redelivered.
-                    //Ack must be sent on the same channel message it was received,
-                    // otherwise raises exception (channel-level protocol exception).
+                    System.out.println(" [x] Done processing task <advancewars>");
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                 }
             };
@@ -193,7 +268,56 @@ public class Server {
             //Register handler deliverCallback()
             channel.basicConsume(queueName, autoAck, deliverCallback, consumerTag -> {
             });
-
+            DeliverCallback deliverCallback2 = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), "UTF-8");
+                System.out.println(" [x] <faulttolerance> Received '" + message + "'");
+                try{
+                    //0created/started/joined 1user 2room 3map 4commander 5id
+                    String[] split = message.split(" ");
+                    if(split[5].compareTo(id)==0){
+                        Logger.getAnonymousLogger().log(Level.INFO, Thread.currentThread().getName()+": Fault tolerance message received by the same worker that sent i" + "t, ignoring it.\"");
+                        for (GameLobby gl : db.getGames()) {
+                            {
+                                System.out.println("IGNORED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                            }
+                        }
+                    }
+                    else {
+                        if (split[0].startsWith("CREATED")) {
+                            GameLobby g = new GameLobby(split[1], split[2], Integer.parseInt(split[3]), Integer.parseInt(split[4]));
+                            db.addGame(g);
+                            //print the game info: users, number of players and room, use this db to do it, using a for each
+                            for (GameLobby gl : db.getGames()) {
+                                {
+                                    System.out.println("CREATED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                                }
+                            }
+                        } else {
+                            GameLobby g = db.getGame(split[2]);
+                            g.addToGameLobby(split[1], Integer.parseInt(split[4]));
+                            for (GameLobby gl : db.getGames()) {
+                                {
+                                    System.out.println("ADDED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                                }
+                            }
+                        }
+                    }
+                }catch(Exception e){
+                    System.out.println(e);
+                    throw new RuntimeException(e);
+                }finally{
+                    System.out.println(" [x] Done processing task <faulttolerance>");
+                    //Worker must Manually ack each finalised task, hence, even if worker is killed
+                    //(CTRL+C) while processing a message, nothing will be lost.
+                    //Soon after the worker dies all unacknowledged messages will be redelivered.
+                    //Ack must be sent on the same channel message it was received,
+                    // otherwise raises exception (channel-level protocol exception).
+                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                }
+            };
+            //Register handler deliverCallback()
+            channel.basicConsume(faultToleranceQueue, autoAck, deliverCallback2, consumerTag -> {
+            });
         } catch (Exception e) {
             //Logger.getLogger(Recv.class.getName()).log(Level.INFO, e.toString());
             e.printStackTrace();

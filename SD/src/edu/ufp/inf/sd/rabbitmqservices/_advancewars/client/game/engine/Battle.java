@@ -4,6 +4,7 @@ import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine.Game;
 import edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.menus.EndBattle;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -107,8 +108,9 @@ public class Battle {
 		}
 	}	
 	/**This will be redone when I set up the unit buying menu.*/
-	public void Buyunit(int type, int x, int y) {
+	public void Buyunit(int type, int x, int y) throws IOException {
 		//TODO RABBIT MQ BUYUNIT CODE
+		Game.getObserver().sendMessage("BUY-UNIT/ " + type + " " + x + " " + y + " " + currentplayer + " " +Game.getObserver().getUser());
 		//subjectRI.setState(new State(idFromGame,"BUY UNIT " + type + " " + x + " " + y + " " + currentplayer));
 	}
 

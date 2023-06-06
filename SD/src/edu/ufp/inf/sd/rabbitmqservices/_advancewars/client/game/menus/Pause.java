@@ -25,12 +25,15 @@ public class Pause implements ActionListener {
 	JButton EndTurn = new JButton("EndTurn");
 	JButton Resume = new JButton("Resume");
 	JButton Quit = new JButton("Quit");
+
+	Game g;
 	
-	public Pause() {
+	public Pause(Game gg) {
 		Point size = MenuHandler.PrepMenu(120,180);
 		SetBounds(size);
 		AddGui();
 		AddListeners();
+		this.g=gg;
 	}
 	private void SetBounds(Point size) {
 		Resume.setBounds(size.x+10, size.y+10, 100, 24);
@@ -63,7 +66,7 @@ public class Pause implements ActionListener {
 		else if (s==EndTurn) {
 			//TODO ENDTURN RABBIT CODE
 			try {
-				Game.getObserver().sendMessage("ENDTURN/"+observer.getRoom());
+				Game.getObserver().sendMessage("ENDTURN/"+g.getId()+"/"+Game.btl.getCurrentplayer());
 			} catch (IOException ex) {
 				throw new RuntimeException(ex);
 			}

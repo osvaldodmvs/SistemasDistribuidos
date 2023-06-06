@@ -36,7 +36,6 @@ public class Observer {
 
     //Reference for gui
     //TODO trocar por Game(engine) e adicionar outras coisas se necessario
-    private Game game;
     //Preferences for exchange...
     private final Channel channelToRabbitMq;
     private final String exchangeName;
@@ -45,6 +44,8 @@ public class Observer {
     private final String messageFormat;
     //Settings for specifying topics
     private final String room;
+
+    private final String serverQueue;
     private final String user;
     private final String newOrJoin;
 
@@ -56,7 +57,7 @@ public class Observer {
 
     //user newOrJoin room max commander
 
-    public Observer(String host, int port, String brokerUser, String brokerPass, String user, String newOrJoin, String room, int maxPlayers, String commander, String exchangeName, BuiltinExchangeType exchangeType, String messageFormat) throws IOException, TimeoutException {
+    public Observer(String host, int port, String brokerUser, String brokerPass, String user, String serverQueue, String newOrJoin, String room, int maxPlayers, String commander, String exchangeName, BuiltinExchangeType exchangeType, String messageFormat) throws IOException, TimeoutException {
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, " going to attach advancewars_observer to host: " + host + "...");
 
         Connection connection=RabbitUtils.newConnection2Server(host, port, brokerUser, brokerPass);
@@ -65,6 +66,7 @@ public class Observer {
         this.exchangeName=exchangeName;
         this.exchangeType=exchangeType;
 
+        this.serverQueue=serverQueue;
         this.user=user;
         this.newOrJoin=newOrJoin;
         this.room=room;
@@ -149,11 +151,10 @@ public class Observer {
         //User maybe some <username> (private msg) or 'general' (public msg for all)
         //
         // TODO: Publish message with routing key , in this case, the routing key will always be the same, as the server(s) is consuming from the same queue, as such...
-        String routingKey="advancewars";
         // TODO : WARNING -> THIS IS THE ORIGINAL LINE BELOW
         // channelToRabbitMq.basicPublish(exchangeName, routingKey, null, msgToSend.getBytes("UTF-8"));
-        channelToRabbitMq.basicPublish("", routingKey, null, msgToSend.getBytes("UTF-8"));
-        System.out.println(" [x] Sent '" + msgToSend + "'" + " to exchange '' with routing key = " + routingKey);
+        channelToRabbitMq.basicPublish("", serverQueue, null, msgToSend.getBytes("UTF-8"));
+        System.out.println(" [x] Sent '" + msgToSend + "'" + " to exchange '' with routing key = " + serverQueue);
     }
 
     /**
@@ -178,17 +179,29 @@ public class Observer {
         }
         else if(message.startsWith("Start")) {
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "TRYING TO START WITH MESSAGE :" + message);
-            Game.Start(message, this);
+            String[] messageSplit = message.split(" ");
+            String room = messageSplit[3];
+            Game.Start(message,user,room,this);
             return;
         }
         else{
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "RECEIVED MOVEMENT ---> " + message);
-            Game.updateGUI(message);
+            if(message.startsWith("Wrong")){
+                Logger.getLogger(this.getClass().getName()).log(Level.INFO, message);
+                return;
+            }
+            else{
+                Logger.getLogger(this.getClass().getName()).log(Level.INFO, "RECEIVED ACTION ---> " + message);
+                Game.updateGUI(message);
+            }
         }
     }
 
     public String getRoom() {
         return room;
+    }
+
+    public String getUser() {
+        return user;
     }
 
     public static void main(String[] args) {
@@ -197,12 +210,13 @@ public class Observer {
             String host=args[0];
             int port=Integer.parseInt(args[1]);
             String exchangeName=args[2];
-            String user=args[3];
-            String newOrJoin=args[4];
-            String room=args[5];
-            int maxPlayers=Integer.parseInt(args[6]);
-            String commander=args[7];
-            new Observer(host, port, "guest","guest", user, newOrJoin, room, maxPlayers, commander, exchangeName, BuiltinExchangeType.TOPIC, "UTF-8");
+            String serverQueue=args[3];
+            String user=args[4];
+            String newOrJoin=args[5];
+            String room=args[6];
+            int maxPlayers=Integer.parseInt(args[7]);
+            String commander=args[8];
+            new Observer(host, port, "guest","guest", user,serverQueue, newOrJoin, room, maxPlayers, commander, exchangeName, BuiltinExchangeType.TOPIC, "UTF-8");
         } catch (IOException | TimeoutException e) {
             throw new RuntimeException(e);
         }

@@ -72,13 +72,13 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 			edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base ply = Game.player.get(Game.btl.currentplayer);
 			try {
 				String room = Game.getObserver().getRoom();
-				if (i==up) Game.getObserver().sendMessage("UP/"+room);
-				else if (i==down) Game.getObserver().sendMessage("DOWN/"+room);
-				else if (i==left) Game.getObserver().sendMessage("LEFT/"+room);
-				else if (i==right) Game.getObserver().sendMessage("RIGHT/"+room);
-				else if (i==select) Game.getObserver().sendMessage("SELECT/"+room);
-				else if (i==cancel) Game.getObserver().sendMessage("CANCEL/"+room);
-				else if (i==start) Game.getObserver().sendMessage("START-MENU/"+room);
+				if (i==up) Game.getObserver().sendMessage("UP/"+game.getId()+"/"+Game.btl.getCurrentplayer());
+				else if (i==down) Game.getObserver().sendMessage("DOWN/"+game.getId()+"/"+Game.btl.getCurrentplayer());
+				else if (i==left) Game.getObserver().sendMessage("LEFT/"+game.getId()+"/"+Game.btl.getCurrentplayer());
+				else if (i==right) Game.getObserver().sendMessage("RIGHT/"+game.getId()+"/"+Game.btl.getCurrentplayer());
+				else if (i==select) Game.getObserver().sendMessage("SELECT/"+game.getId()+"/"+Game.btl.getCurrentplayer());
+				else if (i==cancel) Game.getObserver().sendMessage("CANCEL/"+game.getId()+"/"+Game.btl.getCurrentplayer());
+				else if (i==start) Game.getObserver().sendMessage("START-MENU/"+game.getId()+"/"+Game.btl.getCurrentplayer());
 			} catch (IOException ex) {
 				throw new RuntimeException(ex);
 			}

@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.engine;
 
 import java.awt.Point;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Random;
 
@@ -22,7 +23,7 @@ public class ComputerBrain {
 	}
 
 	/**This method is hit every game loop for npcs and handles a single unit / city so it is less heavy on the game.*/
-	public void ThinkDamnYou(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base ply) {
+	public void ThinkDamnYou(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.players.Base ply) throws IOException {
 		//TODO: Redesign it to allow the npc to grab if someone is in firing range faster and easier.
 		if (finished) {
 			finished = false;
@@ -79,7 +80,7 @@ public class ComputerBrain {
 		DoneCities = true;
 	}
 
-	private void HandleBuilding(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base bld) {
+	private void HandleBuilding(edu.ufp.inf.sd.rabbitmqservices._advancewars.client.game.buildings.Base bld) throws IOException {
 		if (!bld.Menu.equals("")) {
 			if (!bld.Locked) {
 				Random rand = new Random();
