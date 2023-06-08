@@ -111,7 +111,7 @@ public class Battle {
 	}	
 	/**This will be redone when I set up the unit buying menu.*/
 	public void Buyunit(int type, int x, int y) throws RemoteException {
-		subjectRI.setState(new State(idFromGame,"BUY UNIT " + type + " " + x + " " + y + " " + currentplayer));
+		subjectRI.setState(new State(idFromGame,"BUY-UNIT " + type + " " + x + " " + y + " " + currentplayer));
 	}
 
 	public void MaxUsers(int max) {

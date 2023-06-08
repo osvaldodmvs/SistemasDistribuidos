@@ -185,10 +185,10 @@ public class Game extends JFrame implements Serializable {
 		SubjectRI sri = getGameSessionRI().getGameIDfromLobby(id).getSubject();
 		if(MovementOrAction.startsWith("BUY-UNIT")){
 			String[] split = MovementOrAction.split(" "); //BUY UNIT TYPE X Y CURRENTPLAYER
-			int type = Integer.parseInt(split[2]);
-			int x = Integer.parseInt(split[3]);
-			int y = Integer.parseInt(split[4]);
-			int currentplayer = Integer.parseInt(split[5]);
+			int type = Integer.parseInt(split[1]);
+			int x = Integer.parseInt(split[2]);
+			int y = Integer.parseInt(split[3]);
+			int currentplayer = Integer.parseInt(split[4]);
 			double cost = Game.displayU.get(type).cost*Game.player.get(currentplayer).CostBonus;
 			if (Game.player.get(currentplayer).money>=cost) {
 				Game.units.add(Game.list.CreateUnit(type, currentplayer, x, y, false));
