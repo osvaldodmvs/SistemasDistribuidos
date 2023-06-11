@@ -14,19 +14,27 @@ public class DBMockup {
 
     private final ArrayList<GameLobby> games;// = new ArrayList();
 
+    private final ArrayList<String> serverIds;
+
     /**
      * This constructor creates and inits the database with some books and users.
      */
     public DBMockup() {
         games = new ArrayList<>();
+        serverIds = new ArrayList<>();
     }
 
     public ArrayList<GameLobby> getGames() {
         return games;
     }
 
+    public ArrayList<String> getServerIds() {
+        return serverIds;
+    }
+
     public void addGame(GameLobby game) {
-        games.add(game);
+        if(!games.contains(game))
+            games.add(game);
     }
 
     public GameLobby getGame(String g) {
@@ -47,4 +55,21 @@ public class DBMockup {
         }
         return false;
     }
+
+    public void addSvToList(String uid){
+        if(!serverIds.contains(uid)){
+            serverIds.add(uid);
+            System.out.println("Added server to list");
+        }
+        else{
+            System.out.println("Server already in list");
+        }
+    }
+
+    public void printServers(){
+        for(String s : serverIds){
+            System.out.println(s);
+        }
+    }
+
 }

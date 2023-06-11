@@ -144,6 +144,7 @@ public class Server {
             String queueName = argv[2];
             String exchangeName = argv[3];
             String faultToleranceExchange = argv[4];
+            db.addSvToList(id);
 
             /* Open a connection and a channel, and declare the queue from which to consume.
             Declare the queue here, as well, because we might start the client before the publisher. */
@@ -172,6 +173,8 @@ public class Server {
             String faultToleranceQueue = channel.queueDeclare().getQueue();
             channel.queueBind(faultToleranceQueue, faultToleranceExchange, "");
             System.out.println(" [*] Bound queue '" + faultToleranceQueue + "' to exchange '" + faultToleranceExchange + "'.");
+            String hello = "HELLO;"+id; // HELLO I AM ID
+            channel.basicPublish(faultToleranceExchange,"",null,hello.getBytes("UTF-8"));
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
                 System.out.println(" [x] <advancewars>  Received '" + message + "'");
@@ -186,7 +189,7 @@ public class Server {
                             message="Game created, waiting for players!";
                             System.out.println("Binding key is : "+split[2]);
                             channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
-                            message="CREATED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id;
+                            message="CREATED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id+" SYNC";
                             System.out.println("Sending CREATED message to fault tolerance exchange : "+message);
                             channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
                         }
@@ -204,7 +207,7 @@ public class Server {
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
                                 message="Start "+g.getMap()+" "+g.returnCommanders()+" "+g.getId();
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
-                                message="STARTED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id;
+                                message="STARTED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id+" SYNC";
                                 System.out.println("Sending STARTED message to fault tolerance exchange : "+message);
                                 channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
                                 //TODO start game
@@ -213,7 +216,7 @@ public class Server {
                                 message="Player joined, waiting for more players!";
                                 System.out.println("Binding key is : "+split[2]);
                                 channel.basicPublish(exchangeName,split[2],null,message.getBytes("UTF-8"));
-                                message="JOINED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id;
+                                message="JOINED "+split[0]+" "+split[2]+" "+split[3]+" "+split[4]+" "+id+" SYNC";
                                 System.out.println("Sending JOINED message to fault tolerance exchange : "+message);
                                 channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
                             }
@@ -269,36 +272,84 @@ public class Server {
             channel.basicConsume(queueName, autoAck, deliverCallback, consumerTag -> {
             });
             DeliverCallback deliverCallback2 = (consumerTag, delivery) -> {
-                String message = new String(delivery.getBody(), "UTF-8");
+                String message = null;
+                byte[] messageByte = null;
+                message = new String(delivery.getBody(), "UTF-8");
+                messageByte = delivery.getBody();
                 System.out.println(" [x] <faulttolerance> Received '" + message + "'");
                 try{
-                    //0created/started/joined 1user 2room 3map 4commander 5id
-                    String[] split = message.split(" ");
-                    if(split[5].compareTo(id)==0){
-                        Logger.getAnonymousLogger().log(Level.INFO, Thread.currentThread().getName()+": Fault tolerance message received by the same worker that sent i" + "t, ignoring it.\"");
-                        for (GameLobby gl : db.getGames()) {
-                            {
-                                System.out.println("IGNORED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                    if(message.startsWith("HELLO")){
+                        String[] hellosplit = message.split(";");
+                            if(hellosplit[0].compareTo("HELLO")==0 && hellosplit[1].compareTo(id)!=0){
+                                db.addSvToList(hellosplit[1]);
+                                System.out.println(" [x] Received HELLO from "+hellosplit[1]+" and added it to the list");
+                                System.out.println("Printing servers :");
+                                db.printServers();
+                                message="HELLO-ACK;"+hellosplit[1]+";"+id; //HELLO HELLOSPLIT[1] , I AM ID
+                                System.out.println(" [->] Sending HELLO-ACK from "+id+" to "+hellosplit[1]);
+                                channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
+                            } else if (hellosplit[0].compareTo("HELLO-ACK")==0 && hellosplit[1].compareTo(id)==0){
+                                db.addSvToList(hellosplit[2]);
+                                System.out.println(" [x] Received HELLO-ACK from "+hellosplit[2]+" and added it to the list");
+                                String idToAsk = db.getServerIds().get(1);
+                                System.out.println("Printing servers (ack) :");
+                                db.printServers();
+                                //1 guarantees that this isn't "us", that would be 0. also, no other server would communicate if their db was empty so
+                                //we can safely assume that the first server in the list is the one we want to ask for games
+                                message="REQUEST;"+id+";"+idToAsk; //REQUEST FROM ID TO IDTOASK
+                                System.out.println(" [->] Sending REQUEST from "+id+" to "+hellosplit[2]);
+                                channel.basicPublish(faultToleranceExchange,"",null,message.getBytes("UTF-8"));
                             }
                         }
-                    }
-                    else {
-                        if (split[0].startsWith("CREATED")) {
-                            GameLobby g = new GameLobby(split[1], split[2], Integer.parseInt(split[3]), Integer.parseInt(split[4]));
-                            db.addGame(g);
-                            //print the game info: users, number of players and room, use this db to do it, using a for each
+                    else if (message.contains("SYNC")){
+                        //0created/started/joined 1user 2room 3map 4commander 5id
+                        String[] split = message.split(" ");
+                        if (split[5].compareTo(id) == 0) {
+                            Logger.getAnonymousLogger().log(Level.INFO, Thread.currentThread().getName() + ": Fault tolerance message received by the same worker that sent i" + "t, ignoring it.\"");
                             for (GameLobby gl : db.getGames()) {
                                 {
-                                    System.out.println("CREATED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                                    System.out.println("IGNORED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
                                 }
                             }
                         } else {
-                            GameLobby g = db.getGame(split[2]);
-                            g.addToGameLobby(split[1], Integer.parseInt(split[4]));
-                            for (GameLobby gl : db.getGames()) {
-                                {
-                                    System.out.println("ADDED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                            if (split[0].startsWith("CREATED")) {
+                                GameLobby g = new GameLobby(split[1], split[2], Integer.parseInt(split[3]), Integer.parseInt(split[4]));
+                                db.addGame(g);
+                                db.addSvToList(split[5]);
+                                //print the game info: users, number of players and room, use this db to do it, using a for each
+                                for (GameLobby gl : db.getGames()) {
+                                    {
+                                        System.out.println("CREATED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                                    }
                                 }
+                            } else {
+                                GameLobby g = db.getGame(split[2]);
+                                g.addToGameLobby(split[1], Integer.parseInt(split[4]));
+                                db.addSvToList(split[5]);
+                                for (GameLobby gl : db.getGames()) {
+                                    {
+                                        System.out.println("ADDED Game: " + gl.getId() + " " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (message.contains("REQUEST")) {
+                        String toAskSplit[] = message.split(";");
+                        if(toAskSplit[2].compareTo(id)==0){
+                            for (GameLobby g: db.getGames()) {
+                                System.out.println(" [->] Sending GAMELOBBY <"+g.getId()+"> ");
+                                byte[] toSend =g.serializeGameLobby(g);
+                                channel.basicPublish(faultToleranceExchange,"",null,toSend);
+                            }
+                        }
+                    }
+                    else{
+                        GameLobby g = GameLobby.deserializeGameLobby(messageByte);
+                        db.addGame(g);
+                        for (GameLobby gl : db.getGames()) {
+                            {
+                                System.out.println("DESERIALIZED Game: " + gl.getId() + " " + gl.getPlayers() + " " + gl.getCommanders());
                             }
                         }
                     }
@@ -322,6 +373,8 @@ public class Server {
             //Logger.getLogger(Recv.class.getName()).log(Level.INFO, e.toString());
             e.printStackTrace();
         }
+
+
 
     }
 

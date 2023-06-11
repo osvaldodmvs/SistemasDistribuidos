@@ -7,7 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 
-import java.io.Serializable;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -188,6 +188,39 @@ public class GameLobby implements Serializable {
 		}
 	}
 
+	public static byte[] serializeGameLobby(GameLobby gl) {
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			oos.writeObject(gl);
+			oos.flush();
+			byte[] serializedGameLobby = bos.toByteArray();
+			oos.close();
+			bos.close();
+			return serializedGameLobby;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
+
+	static GameLobby deserializeGameLobby(byte[] serializedGameLobby) {
+		try {
+			ByteArrayInputStream bis = new ByteArrayInputStream(serializedGameLobby);
+			ObjectInputStream ois = new ObjectInputStream(bis);
+			Object obj = ois.readObject();
+			if (obj instanceof GameLobby) {
+				return (GameLobby) obj;
+			} else {
+				// Handle the case when the deserialized object is not of type GameLobby
+				throw new IllegalArgumentException("The deserialized object is not of type GameLobby.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// Handle any exception occurred during deserialization
+			return null;
+		}
+	}
 
 }
